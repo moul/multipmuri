@@ -1,8 +1,7 @@
 GO ?= go
 
-.PHONY: install
-install:
-	$(GO) install .
+.PHONY: dev
+dev: test lint
 
 .PHONY: test
 test:
@@ -13,9 +12,3 @@ test:
 .PHONY: lint
 lint:
 	golangci-lint run --verbose ./...
-
-.PHONY: release
-release:
-	goreleaser --snapshot --skip-publish --rm-dist
-	@echo -n "Do you want to release? [y/N] " && read ans && [ $${ans:-N} = y ]
-	goreleaser --rm-dist
