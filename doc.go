@@ -12,4 +12,4 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package main // import "moul.io/multipmuri"
+package multipmuri // import "moul.io/multipmuri"
