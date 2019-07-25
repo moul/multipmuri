@@ -26,12 +26,11 @@ type WithProvider interface {
 type Provider string
 
 const (
-	UnknownProvider          Provider = "unknown-provider"
-	GitHubProvider           Provider = "github"
-	GitLabProvider           Provider = "gitlab"
-	GitHubEnterpriseProvider Provider = "github-enterprise"
-	JiraProvider             Provider = "jira"
-	TrelloProvider           Provider = "trello"
+	UnknownProvider Provider = "unknown-provider"
+	GitHubProvider  Provider = "github"
+	GitLabProvider  Provider = "gitlab"
+	JiraProvider    Provider = "jira"
+	TrelloProvider  Provider = "trello"
 )
 
 type Kind string

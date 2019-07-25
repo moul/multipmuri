@@ -3,7 +3,7 @@ package multipmuri
 import "fmt"
 
 func ExampleNewGitHubIssue() {
-	entity := NewGitHubIssue("moul", "depviz", "42")
+	entity := NewGitHubIssue("github.com", "moul", "depviz", "42")
 	fmt.Println("entity")
 	fmt.Println(" ", entity.Canonical())
 	fmt.Println(" ", entity.Kind())
@@ -43,7 +43,7 @@ func ExampleNewGitHubIssue() {
 }
 
 func ExampleNewGitHubService() {
-	entity := NewGitHubService()
+	entity := NewGitHubService("github.com")
 	fmt.Println("entity")
 	fmt.Println(" ", entity.Canonical())
 	fmt.Println(" ", entity.Kind())
@@ -68,7 +68,11 @@ func ExampleNewGitHubService() {
 	}
 	fmt.Println("relationships")
 	for _, name := range relatives {
-		rel, _ := entity.RelDecodeString(name)
+		rel, err := entity.RelDecodeString(name)
+		if err != nil {
+			fmt.Printf("  %-42s -> error: %v\n", name, err)
+			continue
+		}
 		fmt.Printf("  %-42s -> %-43s %s\n", name, rel.Canonical(), rel.Kind())
 	}
 	// Output:
@@ -85,6 +89,62 @@ func ExampleNewGitHubService() {
 	//   moul/depviz                                -> https://github.com/moul/depviz              project
 	//   moul/depviz/milestone/1                    -> https://github.com/moul/depviz/milestone/1  milestone
 	//   moul/depviz#1                              -> https://github.com/moul/depviz/issues/1     issue-or-merge-request
+	//   github.com/moul/depviz/issues/2            -> https://github.com/moul/depviz/issues/2     issue
+	//   github.com/moul/depviz/pull/1              -> https://github.com/moul/depviz/pull/1       merge-request
+	//   https://github.com/moul/depviz/issues/1    -> https://github.com/moul/depviz/issues/1     issue
+	//   https://github.com/moul/depviz#1           -> https://github.com/moul/depviz/issues/1     issue-or-merge-request
+	//   github://moul/depviz#1                     -> https://github.com/moul/depviz/issues/1     issue-or-merge-request
+	//   github://github.com/moul/depviz#1          -> https://github.com/moul/depviz/issues/1     issue-or-merge-request
+	//   github://https://github.com/moul/depviz#1  -> https://github.com/moul/depviz/issues/1     issue-or-merge-request
+}
+
+func ExampleNewGitHubService_Enterprise() {
+	entity := NewGitHubService("ge.company.com")
+	fmt.Println("entity")
+	fmt.Println(" ", entity.Canonical())
+	fmt.Println(" ", entity.Kind())
+	fmt.Println(" ", entity.Provider())
+
+	relatives := []string{
+		"https://github.com",
+		"github.com",
+		"github.com/moul",
+		"@moul",
+		"github.com/moul/depviz",
+		"moul/depviz",
+		"moul/depviz/milestone/1",
+		"moul/depviz#1",
+		"github.com/moul/depviz/issues/2",
+		"github.com/moul/depviz/pull/1",
+		"https://github.com/moul/depviz/issues/1",
+		"https://github.com/moul/depviz#1",
+		"github://moul/depviz#1",
+		"github://github.com/moul/depviz#1",
+		"github://https://github.com/moul/depviz#1",
+	}
+	fmt.Println("relationships")
+	for _, name := range relatives {
+		rel, err := entity.RelDecodeString(name)
+		if err != nil {
+			fmt.Printf("  %-42s -> error: %v\n", name, err)
+			continue
+		}
+		fmt.Printf("  %-42s -> %-43s %s\n", name, rel.Canonical(), rel.Kind())
+	}
+	// Output:
+	// entity
+	//   https://ge.company.com/
+	//   service
+	//   github
+	// relationships
+	//   https://github.com                         -> https://github.com/                         service
+	//   github.com                                 -> https://github.com/                         service
+	//   github.com/moul                            -> https://github.com/moul                     user-or-organization
+	//   @moul                                      -> https://ge.company.com/moul                 user-or-organization
+	//   github.com/moul/depviz                     -> https://github.com/moul/depviz              project
+	//   moul/depviz                                -> https://ge.company.com/moul/depviz          project
+	//   moul/depviz/milestone/1                    -> https://ge.company.com/moul/depviz/milestone/1 milestone
+	//   moul/depviz#1                              -> https://ge.company.com/moul/depviz/issues/1 issue-or-merge-request
 	//   github.com/moul/depviz/issues/2            -> https://github.com/moul/depviz/issues/2     issue
 	//   github.com/moul/depviz/pull/1              -> https://github.com/moul/depviz/pull/1       merge-request
 	//   https://github.com/moul/depviz/issues/1    -> https://github.com/moul/depviz/issues/1     issue

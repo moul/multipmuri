@@ -15,19 +15,19 @@ type GitHubService struct {
 	*withGitHubCommon
 }
 
-func NewGitHubService() *GitHubService {
+func NewGitHubService(hostname string) *GitHubService {
 	return &GitHubService{
 		Service:          &service{},
-		withGitHubCommon: &withGitHubCommon{},
+		withGitHubCommon: &withGitHubCommon{hostname},
 	}
 }
 
 func (e GitHubService) Canonical() string {
-	return "https://github.com/"
+	return fmt.Sprintf("https://%s/", e.Hostname())
 }
 
 func (e GitHubService) RelDecodeString(input string) (Entity, error) {
-	return gitHubRelDecodeString("", "", input, false)
+	return gitHubRelDecodeString(e.Hostname(), "", "", input, false)
 }
 
 //
@@ -42,10 +42,10 @@ type GitHubIssue struct {
 	*withGitHubID
 }
 
-func NewGitHubIssue(owner, repo, id string) *GitHubIssue {
+func NewGitHubIssue(hostname, owner, repo, id string) *GitHubIssue {
 	return &GitHubIssue{
 		Issue:            &issue{},
-		withGitHubCommon: &withGitHubCommon{},
+		withGitHubCommon: &withGitHubCommon{hostname},
 		withGitHubOwner:  &withGitHubOwner{owner},
 		withGitHubRepo:   &withGitHubRepo{repo},
 		withGitHubID:     &withGitHubID{id},
@@ -53,11 +53,11 @@ func NewGitHubIssue(owner, repo, id string) *GitHubIssue {
 }
 
 func (e GitHubIssue) Canonical() string {
-	return fmt.Sprintf("https://github.com/%s/%s/issues/%s", e.Owner(), e.Repo(), e.ID())
+	return fmt.Sprintf("https://%s/%s/%s/issues/%s", e.Hostname(), e.Owner(), e.Repo(), e.ID())
 }
 
 func (e GitHubIssue) RelDecodeString(input string) (Entity, error) {
-	return gitHubRelDecodeString(e.Owner(), e.Repo(), input, false)
+	return gitHubRelDecodeString(e.Hostname(), e.Owner(), e.Repo(), input, false)
 }
 
 //
@@ -72,10 +72,10 @@ type GitHubMilestone struct {
 	*withGitHubID
 }
 
-func NewGitHubMilestone(owner, repo, id string) *GitHubMilestone {
+func NewGitHubMilestone(hostname, owner, repo, id string) *GitHubMilestone {
 	return &GitHubMilestone{
 		Milestone:        &milestone{},
-		withGitHubCommon: &withGitHubCommon{},
+		withGitHubCommon: &withGitHubCommon{hostname},
 		withGitHubOwner:  &withGitHubOwner{owner},
 		withGitHubRepo:   &withGitHubRepo{repo},
 		withGitHubID:     &withGitHubID{id},
@@ -83,11 +83,11 @@ func NewGitHubMilestone(owner, repo, id string) *GitHubMilestone {
 }
 
 func (e GitHubMilestone) Canonical() string {
-	return fmt.Sprintf("https://github.com/%s/%s/milestone/%s", e.Owner(), e.Repo(), e.ID())
+	return fmt.Sprintf("https://%s/%s/%s/milestone/%s", e.Hostname(), e.Owner(), e.Repo(), e.ID())
 }
 
 func (e GitHubMilestone) RelDecodeString(input string) (Entity, error) {
-	return gitHubRelDecodeString(e.Owner(), e.Repo(), input, false)
+	return gitHubRelDecodeString(e.Hostname(), e.Owner(), e.Repo(), input, false)
 }
 
 //
@@ -102,10 +102,10 @@ type GitHubPullRequest struct {
 	*withGitHubID
 }
 
-func NewGitHubPullRequest(owner, repo, id string) *GitHubPullRequest {
+func NewGitHubPullRequest(hostname, owner, repo, id string) *GitHubPullRequest {
 	return &GitHubPullRequest{
 		MergeRequest:     &mergeRequest{},
-		withGitHubCommon: &withGitHubCommon{},
+		withGitHubCommon: &withGitHubCommon{hostname},
 		withGitHubOwner:  &withGitHubOwner{owner},
 		withGitHubRepo:   &withGitHubRepo{repo},
 		withGitHubID:     &withGitHubID{id},
@@ -113,11 +113,11 @@ func NewGitHubPullRequest(owner, repo, id string) *GitHubPullRequest {
 }
 
 func (e GitHubPullRequest) Canonical() string {
-	return fmt.Sprintf("https://github.com/%s/%s/pull/%s", e.Owner(), e.Repo(), e.ID())
+	return fmt.Sprintf("https://%s/%s/%s/pull/%s", e.Hostname(), e.Owner(), e.Repo(), e.ID())
 }
 
 func (e GitHubPullRequest) RelDecodeString(input string) (Entity, error) {
-	return gitHubRelDecodeString(e.Owner(), e.Repo(), input, false)
+	return gitHubRelDecodeString(e.Hostname(), e.Owner(), e.Repo(), input, false)
 }
 
 //
@@ -132,10 +132,10 @@ type GitHubIssueOrPullRequest struct {
 	*withGitHubID
 }
 
-func NewGitHubIssueOrPullRequest(owner, repo, id string) *GitHubIssueOrPullRequest {
+func NewGitHubIssueOrPullRequest(hostname, owner, repo, id string) *GitHubIssueOrPullRequest {
 	return &GitHubIssueOrPullRequest{
 		IssueOrMergeRequest: &issueOrMergeRequest{},
-		withGitHubCommon:    &withGitHubCommon{},
+		withGitHubCommon:    &withGitHubCommon{hostname},
 		withGitHubOwner:     &withGitHubOwner{owner},
 		withGitHubRepo:      &withGitHubRepo{repo},
 		withGitHubID:        &withGitHubID{id},
@@ -143,11 +143,11 @@ func NewGitHubIssueOrPullRequest(owner, repo, id string) *GitHubIssueOrPullReque
 }
 
 func (e GitHubIssueOrPullRequest) Canonical() string {
-	return fmt.Sprintf("https://github.com/%s/%s/issues/%s", e.Owner(), e.Repo(), e.ID())
+	return fmt.Sprintf("https://%s/%s/%s/issues/%s", e.Hostname(), e.Owner(), e.Repo(), e.ID())
 }
 
 func (e GitHubIssueOrPullRequest) RelDecodeString(input string) (Entity, error) {
-	return gitHubRelDecodeString(e.Owner(), e.Repo(), input, false)
+	return gitHubRelDecodeString(e.Hostname(), e.Owner(), e.Repo(), input, false)
 }
 
 //
@@ -160,20 +160,20 @@ type GitHubUserOrOrganization struct {
 	*withGitHubOwner
 }
 
-func NewGitHubUserOrOrganization(owner string) *GitHubUserOrOrganization {
+func NewGitHubUserOrOrganization(hostname, owner string) *GitHubUserOrOrganization {
 	return &GitHubUserOrOrganization{
 		UserOrOrganization: &userOrOrganization{},
-		withGitHubCommon:   &withGitHubCommon{},
+		withGitHubCommon:   &withGitHubCommon{hostname},
 		withGitHubOwner:    &withGitHubOwner{owner},
 	}
 }
 
 func (e GitHubUserOrOrganization) Canonical() string {
-	return fmt.Sprintf("https://github.com/%s", e.Owner())
+	return fmt.Sprintf("https://%s/%s", e.Hostname(), e.Owner())
 }
 
 func (e GitHubUserOrOrganization) RelDecodeString(input string) (Entity, error) {
-	return gitHubRelDecodeString(e.Owner(), "", input, false)
+	return gitHubRelDecodeString(e.Hostname(), e.Owner(), "", input, false)
 }
 
 //
@@ -187,30 +187,36 @@ type GitHubRepo struct {
 	*withGitHubRepo
 }
 
-func NewGitHubRepo(owner, repo string) *GitHubRepo {
+func NewGitHubRepo(hostname, owner, repo string) *GitHubRepo {
 	return &GitHubRepo{
 		Project:          &project{},
-		withGitHubCommon: &withGitHubCommon{},
+		withGitHubCommon: &withGitHubCommon{hostname},
 		withGitHubOwner:  &withGitHubOwner{owner},
 		withGitHubRepo:   &withGitHubRepo{repo},
 	}
 }
 
 func (e GitHubRepo) Canonical() string {
-	return fmt.Sprintf("https://github.com/%s/%s", e.Owner(), e.Repo())
+	return fmt.Sprintf("https://%s/%s/%s", e.Hostname(), e.Owner(), e.Repo())
 }
 
 func (e GitHubRepo) RelDecodeString(input string) (Entity, error) {
-	return gitHubRelDecodeString(e.Owner(), e.Repo(), input, false)
+	return gitHubRelDecodeString(e.Hostname(), e.Owner(), e.Repo(), input, false)
 }
 
 //
 // GitHubCommon
 //
 
-type withGitHubCommon struct{}
+type withGitHubCommon struct{ hostname string }
 
 func (e *withGitHubCommon) Provider() Provider { return GitHubProvider }
+func (e *withGitHubCommon) Hostname() string {
+	if e.hostname == "" {
+		return "github.com"
+	}
+	return e.hostname
+}
 
 type withGitHubOwner struct{ owner string }
 
@@ -228,56 +234,59 @@ func (e *withGitHubID) ID() string { return e.id }
 // Helpers
 //
 
-func gitHubRelDecodeString(owner, repo, input string, force bool) (Entity, error) {
+func gitHubRelDecodeString(hostname, owner, repo, input string, force bool) (Entity, error) {
+	if hostname == "" {
+		hostname = "github.com"
+	}
 	u, err := url.Parse(input)
 	if err != nil {
 		return nil, err
 	}
-	if u.Host == "" && strings.HasPrefix(u.Path, "github.com") {
-		u.Path = u.Path[10:]
-		u.Host = "github.com"
-	}
-	if u.Scheme != "" && u.Scheme != "https" && !force {
+	if isProviderScheme(u.Scheme) { // github://, gitlab://, ...
 		return DecodeString(input)
 	}
-	if u.Host != "" && u.Host != "github.com" && !force {
+	u.Path = strings.Trim(u.Path, "/")
+	if u.Host == "" && len(u.Path) > 0 { // domain.com/a/b
+		u.Host = getHostname(u.Path)
+		if u.Host != "" {
+			u.Path = u.Path[len(u.Host):]
+			u.Path = strings.Trim(u.Path, "/")
+		}
+	}
+	if u.Host != "" && u.Host != hostname && !force {
 		return DecodeString(input)
 	}
-	if len(u.Path) > 0 && u.Path[0] == '/' {
-		u.Path = u.Path[1:]
-	}
-	if owner != "" && repo != "" && u.Path == "" && u.Fragment != "" {
-		return NewGitHubIssueOrPullRequest(owner, repo, u.Fragment), nil
+	if owner != "" && repo != "" && u.Path == "" && u.Fragment != "" { // #42 from a repo
+		return NewGitHubIssueOrPullRequest(hostname, owner, repo, u.Fragment), nil
 	}
 	if u.Path == "" && u.Fragment == "" {
-		return NewGitHubService(), nil
+		return NewGitHubService(hostname), nil
 	}
-	if u.Path != "" && u.Fragment != "" {
+	if u.Path != "" && u.Fragment != "" { // user/repo#42
 		u.Path += "/issue-or-pull-request/" + u.Fragment
 	}
-
 	parts := strings.Split(u.Path, "/")
 	switch len(parts) {
 	case 1:
 		if u.Host != "" && parts[0][0] != '@' {
-			return NewGitHubUserOrOrganization(parts[0]), nil
+			return NewGitHubUserOrOrganization(hostname, parts[0]), nil
 		}
 		if parts[0][0] == '@' {
-			return NewGitHubUserOrOrganization(parts[0][1:]), nil
+			return NewGitHubUserOrOrganization(hostname, parts[0][1:]), nil
 		}
 	case 2:
 		// FIXME: if starting with @ -> it's a team
-		return NewGitHubRepo(parts[0], parts[1]), nil
+		return NewGitHubRepo(hostname, parts[0], parts[1]), nil
 	case 4:
 		switch parts[2] {
 		case "issues":
-			return NewGitHubIssue(parts[0], parts[1], parts[3]), nil
+			return NewGitHubIssue(hostname, parts[0], parts[1], parts[3]), nil
 		case "milestone":
-			return NewGitHubMilestone(parts[0], parts[1], parts[3]), nil
+			return NewGitHubMilestone(hostname, parts[0], parts[1], parts[3]), nil
 		case "pull":
-			return NewGitHubPullRequest(parts[0], parts[1], parts[3]), nil
+			return NewGitHubPullRequest(hostname, parts[0], parts[1], parts[3]), nil
 		case "issue-or-pull-request":
-			return NewGitHubIssueOrPullRequest(parts[0], parts[1], parts[3]), nil
+			return NewGitHubIssueOrPullRequest(hostname, parts[0], parts[1], parts[3]), nil
 		}
 	}
 
