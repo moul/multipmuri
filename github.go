@@ -6,120 +6,229 @@ import (
 	"strings"
 )
 
-// FIXME: reduce redundant code
-
-type githubCommon struct{}
-
-type GitHubIssue struct {
-	githubCommon
-	Issue
-	Owner string
-	Repo  string
-	ID    string
-}
-
-type GitHubMilestone struct {
-	githubCommon
-	Issue
-	Owner string
-	Repo  string
-	ID    string
-}
-
-type GitHubPullRequest struct {
-	githubCommon
-	MergeRequest
-	Owner string
-	Repo  string
-	ID    string
-}
-
-type GitHubIssueOrPullRequest struct {
-	githubCommon
-	MergeRequest
-	Owner string
-	Repo  string
-	ID    string
-}
+//
+// GitHubService
+//
 
 type GitHubService struct {
-	githubCommon
 	Service
+	*withGitHubCommon
 }
 
-type GitHubUserOrOrganization struct {
-	githubCommon
-	UserOrOrganization
-	Owner string
+func NewGitHubService() *GitHubService {
+	return &GitHubService{
+		Service:          &service{},
+		withGitHubCommon: &withGitHubCommon{},
+	}
 }
 
-type GitHubRepo struct {
-	githubCommon
-	UserOrOrganization
-	Owner string
-	Repo  string
+func (e GitHubService) Canonical() string {
+	return "https://github.com/"
 }
 
-func (e GitHubRepo) Canonical() string {
-	return fmt.Sprintf("https://github.com/%s/%s", e.Owner, e.Repo)
-}
-func (e GitHubRepo) Provider() Provider { return GitHubProvider }
-func (e GitHubRepo) Kind() Kind         { return ProjectKind }
-func (e GitHubRepo) RelDecodeString(input string) (DecodedMultipmuri, error) {
-	return githubRelDecodeString(e.githubCommon, input)
+func (e GitHubService) RelDecodeString(input string) (Entity, error) {
+	return gitHubRelDecodeString("", "", input)
 }
 
-func (e GitHubMilestone) Canonical() string {
-	return fmt.Sprintf("https://github.com/%s/%s/milestone/%s", e.Owner, e.Repo, e.ID)
+//
+// GitHubIssue
+//
+
+type GitHubIssue struct {
+	Issue
+	*withGitHubCommon
+	*withGitHubOwner
+	*withGitHubRepo
+	*withGitHubID
 }
-func (e GitHubMilestone) Provider() Provider { return GitHubProvider }
-func (e GitHubMilestone) Kind() Kind         { return MilestoneKind }
-func (e GitHubMilestone) RelDecodeString(input string) (DecodedMultipmuri, error) {
-	return githubRelDecodeString(e.githubCommon, input)
+
+func NewGitHubIssue(owner, repo, id string) *GitHubIssue {
+	return &GitHubIssue{
+		Issue:            &issue{},
+		withGitHubCommon: &withGitHubCommon{},
+		withGitHubOwner:  &withGitHubOwner{owner},
+		withGitHubRepo:   &withGitHubRepo{repo},
+		withGitHubID:     &withGitHubID{id},
+	}
 }
 
 func (e GitHubIssue) Canonical() string {
-	return fmt.Sprintf("https://github.com/%s/%s/issues/%s", e.Owner, e.Repo, e.ID)
-}
-func (e GitHubIssue) Provider() Provider { return GitHubProvider }
-func (e GitHubIssue) Kind() Kind         { return IssueKind }
-func (e GitHubIssue) RelDecodeString(input string) (DecodedMultipmuri, error) {
-	return githubRelDecodeString(e.githubCommon, input)
+	return fmt.Sprintf("https://github.com/%s/%s/issues/%s", e.Owner(), e.Repo(), e.ID())
 }
 
-func (e GitHubIssueOrPullRequest) Canonical() string {
-	return fmt.Sprintf("https://github.com/%s/%s/issues/%s", e.Owner, e.Repo, e.ID)
+func (e GitHubIssue) RelDecodeString(input string) (Entity, error) {
+	return gitHubRelDecodeString(e.Owner(), e.Repo(), input)
 }
-func (e GitHubIssueOrPullRequest) Provider() Provider { return GitHubProvider }
-func (e GitHubIssueOrPullRequest) Kind() Kind         { return IssueOrMergeRequestKind }
-func (e GitHubIssueOrPullRequest) RelDecodeString(input string) (DecodedMultipmuri, error) {
-	return githubRelDecodeString(e.githubCommon, input)
+
+//
+// GitHubMilestone
+//
+
+type GitHubMilestone struct {
+	Milestone
+	*withGitHubCommon
+	*withGitHubOwner
+	*withGitHubRepo
+	*withGitHubID
+}
+
+func NewGitHubMilestone(owner, repo, id string) *GitHubMilestone {
+	return &GitHubMilestone{
+		Milestone:        &milestone{},
+		withGitHubCommon: &withGitHubCommon{},
+		withGitHubOwner:  &withGitHubOwner{owner},
+		withGitHubRepo:   &withGitHubRepo{repo},
+		withGitHubID:     &withGitHubID{id},
+	}
+}
+
+func (e GitHubMilestone) Canonical() string {
+	return fmt.Sprintf("https://github.com/%s/%s/milestone/%s", e.Owner(), e.Repo(), e.ID())
+}
+
+func (e GitHubMilestone) RelDecodeString(input string) (Entity, error) {
+	return gitHubRelDecodeString(e.Owner(), e.Repo(), input)
+}
+
+//
+// GitHubPullRequest
+//
+
+type GitHubPullRequest struct {
+	MergeRequest
+	*withGitHubCommon
+	*withGitHubOwner
+	*withGitHubRepo
+	*withGitHubID
+}
+
+func NewGitHubPullRequest(owner, repo, id string) *GitHubPullRequest {
+	return &GitHubPullRequest{
+		MergeRequest:     &mergeRequest{},
+		withGitHubCommon: &withGitHubCommon{},
+		withGitHubOwner:  &withGitHubOwner{owner},
+		withGitHubRepo:   &withGitHubRepo{repo},
+		withGitHubID:     &withGitHubID{id},
+	}
 }
 
 func (e GitHubPullRequest) Canonical() string {
-	return fmt.Sprintf("https://github.com/%s/%s/pull/%s", e.Owner, e.Repo, e.ID)
-}
-func (e GitHubPullRequest) Provider() Provider { return GitHubProvider }
-func (e GitHubPullRequest) Kind() Kind         { return MergeRequestKind }
-func (e GitHubPullRequest) RelDecodeString(input string) (DecodedMultipmuri, error) {
-	return githubRelDecodeString(e.githubCommon, input)
+	return fmt.Sprintf("https://github.com/%s/%s/pull/%s", e.Owner(), e.Repo(), e.ID())
 }
 
-func (e GitHubUserOrOrganization) Canonical() string  { return "https://github.com/" + e.Owner }
-func (e GitHubUserOrOrganization) Provider() Provider { return GitHubProvider }
-func (e GitHubUserOrOrganization) Kind() Kind         { return UserOrOrganizationKind }
-func (e GitHubUserOrOrganization) RelDecodeString(input string) (DecodedMultipmuri, error) {
-	return githubRelDecodeString(e.githubCommon, input)
+func (e GitHubPullRequest) RelDecodeString(input string) (Entity, error) {
+	return gitHubRelDecodeString(e.Owner(), e.Repo(), input)
 }
 
-func (e GitHubService) Canonical() string  { return "https://github.com" }
-func (e GitHubService) Provider() Provider { return GitHubProvider }
-func (e GitHubService) Kind() Kind         { return ServiceKind }
-func (e GitHubService) RelDecodeString(input string) (DecodedMultipmuri, error) {
-	return githubRelDecodeString(e.githubCommon, input)
+//
+// GitHubIssueOrPullRequest
+//
+
+type GitHubIssueOrPullRequest struct {
+	IssueOrMergeRequest
+	*withGitHubCommon
+	*withGitHubOwner
+	*withGitHubRepo
+	*withGitHubID
 }
 
-func githubRelDecodeString(common githubCommon, input string) (DecodedMultipmuri, error) {
+func NewGitHubIssueOrPullRequest(owner, repo, id string) *GitHubIssueOrPullRequest {
+	return &GitHubIssueOrPullRequest{
+		IssueOrMergeRequest: &issueOrMergeRequest{},
+		withGitHubCommon:    &withGitHubCommon{},
+		withGitHubOwner:     &withGitHubOwner{owner},
+		withGitHubRepo:      &withGitHubRepo{repo},
+		withGitHubID:        &withGitHubID{id},
+	}
+}
+
+func (e GitHubIssueOrPullRequest) Canonical() string {
+	return fmt.Sprintf("https://github.com/%s/%s/issues/%s", e.Owner(), e.Repo(), e.ID())
+}
+
+func (e GitHubIssueOrPullRequest) RelDecodeString(input string) (Entity, error) {
+	return gitHubRelDecodeString(e.Owner(), e.Repo(), input)
+}
+
+//
+// GitHubUserOrOrganization
+//
+
+type GitHubUserOrOrganization struct {
+	UserOrOrganization
+	*withGitHubCommon
+	*withGitHubOwner
+}
+
+func NewGitHubUserOrOrganization(owner string) *GitHubUserOrOrganization {
+	return &GitHubUserOrOrganization{
+		UserOrOrganization: &userOrOrganization{},
+		withGitHubCommon:   &withGitHubCommon{},
+		withGitHubOwner:    &withGitHubOwner{owner},
+	}
+}
+
+func (e GitHubUserOrOrganization) Canonical() string {
+	return fmt.Sprintf("https://github.com/%s", e.Owner())
+}
+
+func (e GitHubUserOrOrganization) RelDecodeString(input string) (Entity, error) {
+	return gitHubRelDecodeString(e.Owner(), "", input)
+}
+
+//
+// GitHubRepo
+//
+
+type GitHubRepo struct {
+	Project
+	*withGitHubCommon
+	*withGitHubOwner
+	*withGitHubRepo
+}
+
+func NewGitHubRepo(owner, repo string) *GitHubRepo {
+	return &GitHubRepo{
+		Project:          &project{},
+		withGitHubCommon: &withGitHubCommon{},
+		withGitHubOwner:  &withGitHubOwner{owner},
+		withGitHubRepo:   &withGitHubRepo{repo},
+	}
+}
+
+func (e GitHubRepo) Canonical() string {
+	return fmt.Sprintf("https://github.com/%s/%s", e.Owner(), e.Repo())
+}
+
+func (e GitHubRepo) RelDecodeString(input string) (Entity, error) {
+	return gitHubRelDecodeString(e.Owner(), e.Repo(), input)
+}
+
+//
+// GitHubCommon
+//
+
+type withGitHubCommon struct{}
+
+func (e *withGitHubCommon) Provider() Provider { return GitHubProvider }
+
+type withGitHubOwner struct{ owner string }
+
+func (e *withGitHubOwner) Owner() string { return e.owner }
+
+type withGitHubRepo struct{ repo string }
+
+func (e *withGitHubRepo) Repo() string { return e.repo }
+
+type withGitHubID struct{ id string }
+
+func (e *withGitHubID) ID() string { return e.id }
+
+//
+// Helpers
+//
+
+func gitHubRelDecodeString(owner, repo, input string) (Entity, error) {
 	// sanitization
 	u, err := url.Parse(input)
 	if err != nil {
@@ -132,7 +241,7 @@ func githubRelDecodeString(common githubCommon, input string) (DecodedMultipmuri
 		u.Path = u.Path[1:]
 	}
 	if u.Path == "" {
-		return &GitHubService{}, nil
+		return NewGitHubService(), nil
 	}
 	if u.Fragment != "" {
 		u.Path += "/issue-or-pull-request/" + u.Fragment
@@ -145,19 +254,19 @@ func githubRelDecodeString(common githubCommon, input string) (DecodedMultipmuri
 		if parts[0][0] == '@' {
 			parts[0] = parts[0][1:]
 		}
-		return &GitHubUserOrOrganization{Owner: parts[0]}, nil
+		return NewGitHubUserOrOrganization(parts[0]), nil
 	case 2:
-		return &GitHubRepo{Owner: parts[0], Repo: parts[1]}, nil
+		return NewGitHubRepo(parts[0], parts[1]), nil
 	case 4:
 		switch parts[2] {
 		case "issues":
-			return &GitHubIssue{Owner: parts[0], Repo: parts[1], ID: parts[3]}, nil
+			return NewGitHubIssue(parts[0], parts[1], parts[3]), nil
 		case "milestone":
-			return &GitHubMilestone{Owner: parts[0], Repo: parts[1], ID: parts[3]}, nil
+			return NewGitHubMilestone(parts[0], parts[1], parts[3]), nil
 		case "pull":
-			return &GitHubPullRequest{Owner: parts[0], Repo: parts[1], ID: parts[3]}, nil
+			return NewGitHubPullRequest(parts[0], parts[1], parts[3]), nil
 		case "issue-or-pull-request":
-			return &GitHubIssueOrPullRequest{Owner: parts[0], Repo: parts[1], ID: parts[3]}, nil
+			return NewGitHubIssueOrPullRequest(parts[0], parts[1], parts[3]), nil
 		}
 	}
 

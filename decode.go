@@ -2,7 +2,7 @@ package multipmuri
 
 import "net/url"
 
-func DecodeString(input string) (DecodedMultipmuri, error) {
+func DecodeString(input string) (Entity, error) {
 	u, err := url.Parse(input)
 	if err != nil {
 		return nil, err

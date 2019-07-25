@@ -3,6 +3,7 @@ package multipmuri
 import "fmt"
 
 func ExampleDecodeString() {
+
 	for _, uri := range []string{
 		"https://github.com",
 		"github.com",
@@ -21,16 +22,16 @@ func ExampleDecodeString() {
 		"github://github.com/moul/depviz#1",
 		"github://https://github.com/moul/depviz#1",
 	} {
-		decoded, _ := DecodeString(uri)
-		if decoded != nil {
-			fmt.Printf("%-42s %-43s %-8s %s\n", uri, decoded.Canonical(), decoded.Provider(), decoded.Kind())
-		} else {
-			fmt.Println(uri)
+		decoded, err := DecodeString(uri)
+		if err != nil {
+			fmt.Printf("%-42s error: %v\n", uri, err)
+			continue
 		}
+		fmt.Printf("%-42s %-43s %-8s %s\n", uri, decoded.Canonical(), decoded.Provider(), decoded.Kind())
 	}
 	// Output:
-	// https://github.com                         https://github.com                          github   service
-	// github.com                                 https://github.com                          github   service
+	// https://github.com                         https://github.com/                         github   service
+	// github.com                                 https://github.com/                         github   service
 	// github.com/moul                            https://github.com/moul                     github   user-or-organization
 	// moul                                       https://github.com/moul                     github   user-or-organization
 	// @moul                                      https://github.com/moul                     github   user-or-organization
