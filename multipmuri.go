@@ -36,16 +36,17 @@ const (
 type Kind string
 
 const (
-	UnknownKind             Kind = "unknown-kind"
-	IssueKind               Kind = "issue"
-	MergeRequestKind        Kind = "merge-request"
-	ProviderKind            Kind = "provider"
-	UserOrOrganizationKind  Kind = "user-or-organization"
-	ServiceKind             Kind = "service"
-	MilestoneKind           Kind = "milestone"
-	IssueOrMergeRequestKind Kind = "issue-or-merge-request"
-	UserKind                Kind = "user"
-	ProjectKind             Kind = "project"
+	UnknownKind               Kind = "unknown-kind"
+	IssueKind                 Kind = "issue"
+	MergeRequestKind          Kind = "merge-request"
+	ProviderKind              Kind = "provider"
+	UserOrOrganizationKind    Kind = "user-or-organization"
+	OrganizationOrProjectKind Kind = "organization-or-project"
+	ServiceKind               Kind = "service"
+	MilestoneKind             Kind = "milestone"
+	IssueOrMergeRequestKind   Kind = "issue-or-merge-request"
+	UserKind                  Kind = "user"
+	ProjectKind               Kind = "project"
 )
 
 //
@@ -61,6 +62,20 @@ type issue struct{}
 
 func (issue) IsIssue()   {}
 func (issue) Kind() Kind { return IssueKind }
+
+//
+// OrganizationOrProject
+//
+
+type OrganizationOrProject interface {
+	WithKind
+	IsOrganizationOrProject()
+}
+
+type organizationOrProject struct{}
+
+func (organizationOrProject) IsOrganizationOrProject() {}
+func (organizationOrProject) Kind() Kind               { return OrganizationOrProjectKind }
 
 //
 // IssueOrMergeRequest

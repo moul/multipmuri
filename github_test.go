@@ -39,7 +39,7 @@ func ExampleNewGitHubIssue() {
 	//   github.com/moul2/depviz2#42                -> https://github.com/moul2/depviz2/issues/42
 	//   https://github.com/moul2/depviz2#42        -> https://github.com/moul2/depviz2/issues/42
 	//   https://example.com/a/b#42                 -> error: ambiguous uri "https://example.com/a/b#42"
-	//   https://gitlab.com/moul/depviz/issues/42   -> error: ambiguous uri "https://gitlab.com/moul/depviz/issues/42"
+	//   https://gitlab.com/moul/depviz/issues/42   -> https://gitlab.com/moul/depviz/issues/42
 }
 
 func ExampleNewGitHubService() {
