@@ -28,7 +28,8 @@ func DecodeString(input string) (Entity, error) {
 		switch u.Scheme {
 		case string(GitHubProvider):
 			return gitHubRelDecodeString(getHostname(input), "", "", input, true)
-			//case string(GitLabProvider):
+		case string(GitLabProvider):
+			return gitLabRelDecodeString(getHostname(input), "", "", input, true)
 			//case string(JiraProvider):
 			//case string(TrelloProvider):
 		}
@@ -44,7 +45,8 @@ func DecodeString(input string) (Entity, error) {
 		switch u.Host {
 		case "github.com":
 			return gitHubRelDecodeString("", "", "", input, true)
-			// case "gitlab.com":
+		case "gitlab.com":
+			return gitLabRelDecodeString("", "", "", input, true)
 			// case "jira.com", "atlassian.com":
 			// case "trello.com":
 		}
