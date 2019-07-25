@@ -3,12 +3,10 @@ package multipmuri
 import "fmt"
 
 func ExampleDecodeString() {
-
 	for _, uri := range []string{
 		"https://github.com",
 		"github.com",
 		"github.com/moul",
-		"moul",
 		"@moul",
 		"github.com/moul/depviz",
 		"moul/depviz",
@@ -33,12 +31,11 @@ func ExampleDecodeString() {
 	// https://github.com                         https://github.com/                         github   service
 	// github.com                                 https://github.com/                         github   service
 	// github.com/moul                            https://github.com/moul                     github   user-or-organization
-	// moul                                       https://github.com/moul                     github   user-or-organization
-	// @moul                                      https://github.com/moul                     github   user-or-organization
+	// @moul                                      error: ambiguous uri "@moul"
 	// github.com/moul/depviz                     https://github.com/moul/depviz              github   project
-	// moul/depviz                                https://github.com/moul/depviz              github   project
-	// moul/depviz/milestone/1                    https://github.com/moul/depviz/milestone/1  github   milestone
-	// moul/depviz#1                              https://github.com/moul/depviz/issues/1     github   issue-or-merge-request
+	// moul/depviz                                error: ambiguous uri "moul/depviz"
+	// moul/depviz/milestone/1                    error: ambiguous uri "moul/depviz/milestone/1"
+	// moul/depviz#1                              error: ambiguous uri "moul/depviz#1"
 	// github.com/moul/depviz/issues/2            https://github.com/moul/depviz/issues/2     github   issue
 	// github.com/moul/depviz/pull/1              https://github.com/moul/depviz/pull/1       github   merge-request
 	// https://github.com/moul/depviz/issues/1    https://github.com/moul/depviz/issues/1     github   issue

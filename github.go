@@ -27,7 +27,7 @@ func (e GitHubService) Canonical() string {
 }
 
 func (e GitHubService) RelDecodeString(input string) (Entity, error) {
-	return gitHubRelDecodeString("", "", input)
+	return gitHubRelDecodeString("", "", input, false)
 }
 
 //
@@ -57,7 +57,7 @@ func (e GitHubIssue) Canonical() string {
 }
 
 func (e GitHubIssue) RelDecodeString(input string) (Entity, error) {
-	return gitHubRelDecodeString(e.Owner(), e.Repo(), input)
+	return gitHubRelDecodeString(e.Owner(), e.Repo(), input, false)
 }
 
 //
@@ -87,7 +87,7 @@ func (e GitHubMilestone) Canonical() string {
 }
 
 func (e GitHubMilestone) RelDecodeString(input string) (Entity, error) {
-	return gitHubRelDecodeString(e.Owner(), e.Repo(), input)
+	return gitHubRelDecodeString(e.Owner(), e.Repo(), input, false)
 }
 
 //
@@ -117,7 +117,7 @@ func (e GitHubPullRequest) Canonical() string {
 }
 
 func (e GitHubPullRequest) RelDecodeString(input string) (Entity, error) {
-	return gitHubRelDecodeString(e.Owner(), e.Repo(), input)
+	return gitHubRelDecodeString(e.Owner(), e.Repo(), input, false)
 }
 
 //
@@ -147,7 +147,7 @@ func (e GitHubIssueOrPullRequest) Canonical() string {
 }
 
 func (e GitHubIssueOrPullRequest) RelDecodeString(input string) (Entity, error) {
-	return gitHubRelDecodeString(e.Owner(), e.Repo(), input)
+	return gitHubRelDecodeString(e.Owner(), e.Repo(), input, false)
 }
 
 //
@@ -173,7 +173,7 @@ func (e GitHubUserOrOrganization) Canonical() string {
 }
 
 func (e GitHubUserOrOrganization) RelDecodeString(input string) (Entity, error) {
-	return gitHubRelDecodeString(e.Owner(), "", input)
+	return gitHubRelDecodeString(e.Owner(), "", input, false)
 }
 
 //
@@ -201,7 +201,7 @@ func (e GitHubRepo) Canonical() string {
 }
 
 func (e GitHubRepo) RelDecodeString(input string) (Entity, error) {
-	return gitHubRelDecodeString(e.Owner(), e.Repo(), input)
+	return gitHubRelDecodeString(e.Owner(), e.Repo(), input, false)
 }
 
 //
@@ -228,34 +228,45 @@ func (e *withGitHubID) ID() string { return e.id }
 // Helpers
 //
 
-func gitHubRelDecodeString(owner, repo, input string) (Entity, error) {
-	// sanitization
+func gitHubRelDecodeString(owner, repo, input string, force bool) (Entity, error) {
 	u, err := url.Parse(input)
 	if err != nil {
 		return nil, err
 	}
 	if u.Host == "" && strings.HasPrefix(u.Path, "github.com") {
 		u.Path = u.Path[10:]
+		u.Host = "github.com"
+	}
+	if u.Scheme != "" && u.Scheme != "https" && !force {
+		return DecodeString(input)
+	}
+	if u.Host != "" && u.Host != "github.com" && !force {
+		return DecodeString(input)
 	}
 	if len(u.Path) > 0 && u.Path[0] == '/' {
 		u.Path = u.Path[1:]
 	}
-	if u.Path == "" {
+	if owner != "" && repo != "" && u.Path == "" && u.Fragment != "" {
+		return NewGitHubIssueOrPullRequest(owner, repo, u.Fragment), nil
+	}
+	if u.Path == "" && u.Fragment == "" {
 		return NewGitHubService(), nil
 	}
-	if u.Fragment != "" {
+	if u.Path != "" && u.Fragment != "" {
 		u.Path += "/issue-or-pull-request/" + u.Fragment
 	}
 
-	// mapping
 	parts := strings.Split(u.Path, "/")
 	switch len(parts) {
 	case 1:
-		if parts[0][0] == '@' {
-			parts[0] = parts[0][1:]
+		if u.Host != "" && parts[0][0] != '@' {
+			return NewGitHubUserOrOrganization(parts[0]), nil
 		}
-		return NewGitHubUserOrOrganization(parts[0]), nil
+		if parts[0][0] == '@' {
+			return NewGitHubUserOrOrganization(parts[0][1:]), nil
+		}
 	case 2:
+		// FIXME: if starting with @ -> it's a team
 		return NewGitHubRepo(parts[0], parts[1]), nil
 	case 4:
 		switch parts[2] {

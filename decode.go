@@ -1,6 +1,10 @@
 package multipmuri
 
-import "net/url"
+import (
+	"fmt"
+	"net/url"
+	"strings"
+)
 
 func DecodeString(input string) (Entity, error) {
 	u, err := url.Parse(input)
@@ -9,8 +13,20 @@ func DecodeString(input string) (Entity, error) {
 	}
 	switch u.Scheme {
 	case string(GitHubProvider):
-		return GitHubService{}.RelDecodeString(input[len(u.Scheme)+3:])
+		return gitHubRelDecodeString("", "", input[len(u.Scheme)+3:], true)
 	}
 
-	return GitHubService{}.RelDecodeString(input) // fallback on GitHub (for now)
+	if u.Scheme == "" && u.Host == "" && u.Path != "" {
+		u.Host = strings.Split(u.Path, "/")[0]
+		// u.Path = u.Path[len(u.Host)+1:]
+	}
+
+	if u.Scheme == "" || u.Scheme == "https" || u.Scheme == "http" {
+		switch u.Host {
+		case "github.com":
+			return gitHubRelDecodeString("", "", input, true)
+		}
+	}
+
+	return nil, fmt.Errorf("ambiguous uri %q", input)
 }
