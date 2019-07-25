@@ -14,7 +14,21 @@
 
 ## Usage
 
-_**FIXME**_
+This libraries parses an URI that you could find in a README, markdown, comment field of the populat project-management tools.
+
+You can use the library to parse an URI:
+* without context (i.e. `github.com/moul/depviz#42`)
+* with a context (i.e. `#42` in the context of `github.com/moul/depviz`)
+
+```golang
+import "moul.io/multipmuri"
+
+depviz42, _ := multipmuri.DecodeString("github.com/moul/depviz#42")
+fmt.Println(depviz42.Canonical()) // https://github.com/moul/depviz/issues/42
+
+depviz43, _ := depviz42.RelDecodeString("#43")
+fmt.Println(depviz43.Canonical()) // https://github.com/moul/depviz/issues/43
+```
 
 ## Install
 
