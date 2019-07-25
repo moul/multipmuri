@@ -1,41 +1,37 @@
 package multipmuri
 
-type DecodedMultipmuri interface {
+//
+// Entity
+//
+
+type Entity interface {
+	WithKind
+	WithProvider
 	Canonical() string
-	Provider() Provider
+	RelDecodeString(string) (Entity, error)
+}
+
+type WithKind interface {
 	Kind() Kind
-	RelDecodeString(string) (DecodedMultipmuri, error)
 }
 
-type Issue interface {
-	DecodedMultipmuri
-	IsIssue() bool
+type WithProvider interface {
+	Provider() Provider
 }
 
-type MergeRequest interface {
-	DecodedMultipmuri
-	IsMergeRequest() bool
-}
-
-type Service interface {
-	DecodedMultipmuri
-	IsService() bool
-}
-
-type UserOrOrganization interface {
-	DecodedMultipmuri
-	IsUserOrOrganization() bool
-}
+//
+// Enums
+//
 
 type Provider string
 
 const (
-	UnknownProvider Provider = "unknown-provider"
-	GitHubProvider  Provider = "github"
-	GitLabProvider  Provider = "gitlab"
-	//GitHubEnterpriseProvider Provider = "github-enterprise"
-	//JiraProvider             Provider = "jira"
-	//TrelloProvider           Provider = "trello"
+	UnknownProvider          Provider = "unknown-provider"
+	GitHubProvider           Provider = "github"
+	GitLabProvider           Provider = "gitlab"
+	GitHubEnterpriseProvider Provider = "github-enterprise"
+	JiraProvider             Provider = "jira"
+	TrelloProvider           Provider = "trello"
 )
 
 type Kind string
@@ -47,9 +43,106 @@ const (
 	ProviderKind            Kind = "provider"
 	UserOrOrganizationKind  Kind = "user-or-organization"
 	ServiceKind             Kind = "service"
-	ProjectKind             Kind = "project"
 	MilestoneKind           Kind = "milestone"
 	IssueOrMergeRequestKind Kind = "issue-or-merge-request"
-	//UserKind                Kind = "user"
-	//ProjectKind             Kind = "project"
+	UserKind                Kind = "user"
+	ProjectKind             Kind = "project"
 )
+
+//
+// Issue
+//
+
+type Issue interface {
+	WithKind
+	IsIssue()
+}
+
+type issue struct{}
+
+func (issue) IsIssue()   {}
+func (issue) Kind() Kind { return IssueKind }
+
+//
+// IssueOrMergeRequest
+//
+
+type IssueOrMergeRequest interface {
+	WithKind
+	IsIssueOrMergeRequest()
+}
+
+type issueOrMergeRequest struct{}
+
+func (issueOrMergeRequest) IsIssueOrMergeRequest() {}
+func (issueOrMergeRequest) Kind() Kind             { return IssueOrMergeRequestKind }
+
+//
+// Milestone
+//
+
+type Milestone interface {
+	WithKind
+	IsMilestone()
+}
+
+type milestone struct{}
+
+func (milestone) IsMilestone() {}
+func (milestone) Kind() Kind   { return MilestoneKind }
+
+//
+// Project
+//
+
+type Project interface {
+	WithKind
+	IsProject()
+}
+
+type project struct{}
+
+func (project) IsProject() {}
+func (project) Kind() Kind { return ProjectKind }
+
+//
+// MergeRequest
+//
+
+type MergeRequest interface {
+	WithKind
+	IsMergeRequest()
+}
+
+type mergeRequest struct{}
+
+func (mergeRequest) IsMergeRequest() {}
+func (mergeRequest) Kind() Kind      { return MergeRequestKind }
+
+//
+// Service
+//
+
+type Service interface {
+	WithKind
+	IsService()
+}
+
+type service struct{}
+
+func (service) IsService() {}
+func (service) Kind() Kind { return ServiceKind }
+
+//
+// UserOrOrganization
+//
+
+type UserOrOrganization interface {
+	WithKind
+	IsUserOrOrganization()
+}
+
+type userOrOrganization struct{}
+
+func (userOrOrganization) IsUserOrOrganization() {}
+func (userOrOrganization) Kind() Kind            { return UserOrOrganizationKind }
