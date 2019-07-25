@@ -6,18 +6,18 @@ import (
 	"strings"
 )
 
-func isProviderScheme(scheme string) bool {
-	switch scheme {
-	case string(GitHubProvider),
-		string(TrelloProvider),
-		string(JiraProvider),
-		string(GitLabProvider):
-		return true
-	}
-	return false
+func DecodeString(input string) (Entity, error) {
+	return NewUnknownEntity().RelDecodeString(input)
 }
 
-func DecodeString(input string) (Entity, error) {
+type unknownEntity struct{}
+
+func NewUnknownEntity() Entity { return &unknownEntity{} }
+
+func (unknownEntity) Kind() Kind         { return UnknownKind }
+func (unknownEntity) Provider() Provider { return UnknownProvider }
+func (unknownEntity) Canonical() string  { return "" }
+func (unknownEntity) RelDecodeString(input string) (Entity, error) {
 	u, err := url.Parse(input)
 	if err != nil {
 		return nil, err

@@ -25,3 +25,14 @@ func getHostname(input string) string {
 func isHostname(input string) bool {
 	return strings.Contains(input, ".")
 }
+
+func isProviderScheme(scheme string) bool {
+	switch scheme {
+	case string(GitHubProvider),
+		string(TrelloProvider),
+		string(JiraProvider),
+		string(GitLabProvider):
+		return true
+	}
+	return false
+}
