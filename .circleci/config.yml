@@ -8,15 +8,8 @@ executors:
     environment:
       GO111MODULE: "on"
 
-commands:
-  install-retry:
-    steps:
-      - run: command -v wget &>/dev/null && wget -O /tmp/retry "https://github.com/moul/retry/releases/download/v0.5.0/retry_$(uname -s)_$(uname -m)" || true
-      - run: if [ ! -f /tmp/retry ]; then command -v curl &>/dev/null && curl -L -o /tmp/retry "https://github.com/moul/retry/releases/download/v0.5.0/retry_$(uname -s)_$(uname -m)"; fi
-      - run: chmod +x /tmp/retry
-      - run: /tmp/retry --version
-
 orbs:
+  moul: moul/build@1.3.0
   codecov: codecov/codecov@1.0.2
 
 jobs:
@@ -24,13 +17,14 @@ jobs:
     executor: golang
     steps:
       - checkout
-      - install-retry
+      - moul/install_retry
       - run: /tmp/retry -m 3 go mod download
       - run: /tmp/retry -m 3 make test
-      - run: /tmp/retry -m 3 curl -sfL https://install.goreleaser.com/github.com/golangci/golangci-lint.sh | sh -s v1.15.0
+      - moul/install_golangci-lint
       - run: PATH=$PATH:$(pwd)/bin /tmp/retry -m 3 make lint
       - codecov/upload:
           file: coverage.txt
+
 workflows:
   main:
     jobs:
