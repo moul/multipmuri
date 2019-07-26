@@ -8,6 +8,7 @@
 [![GitHub release](https://img.shields.io/github/release/moul/multipmuri.svg)](https://github.com/moul/multipmuri/releases)
 [![Go Report Card](https://goreportcard.com/badge/moul.io/multipmuri)](https://goreportcard.com/report/moul.io/multipmuri)
 [![CodeFactor](https://www.codefactor.io/repository/github/moul/multipmuri/badge)](https://www.codefactor.io/repository/github/moul/multipmuri)
+[![codecov](https://codecov.io/gh/moul/multipmuri/branch/master/graph/badge.svg)](https://codecov.io/gh/moul/multipmuri)
 [![Made by Manfred Touron](https://img.shields.io/badge/made%20by-Manfred%20Touron-blue.svg?style=flat)](https://manfred.life/)
 <!--[![Docker Metrics](https://images.microbadger.com/badges/image/moul/multipmuri.svg)](https://microbadger.com/images/moul/multipmuri)-->
 
