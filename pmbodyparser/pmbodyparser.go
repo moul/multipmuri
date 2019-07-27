@@ -3,6 +3,7 @@ package pmbodyparser
 import (
 	"fmt"
 	"regexp"
+	"sort"
 
 	"moul.io/multipmuri"
 )
@@ -32,6 +33,24 @@ func (r Relationship) String() string {
 // FIXME: add isDependent / isDepending helpers
 
 type Relationships []Relationship
+
+func (r Relationships) Less(i, j int) bool {
+	if r[i].Kind < r[j].Kind {
+		return true
+	}
+	if r[j].Kind < r[i].Kind {
+		return false
+	}
+	return r[i].Target.Canonical() < r[j].Target.Canonical()
+}
+
+func (r Relationships) Len() int {
+	return len(r)
+}
+
+func (r Relationships) Swap(i, j int) {
+	r[i], r[j] = r[j], r[i]
+}
 
 func ParseString(body string) (Relationships, []error) {
 	return RelParseString(multipmuri.NewUnknownEntity(), body)
@@ -75,5 +94,6 @@ func RelParseString(context multipmuri.Entity, body string) (Relationships, []er
 		}
 	}
 
+	sort.Sort(relationships)
 	return relationships, errs
 }
