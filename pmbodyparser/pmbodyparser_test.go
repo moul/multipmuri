@@ -31,9 +31,9 @@ Signed-off-by: Super Developer <super.dev@gmail.com>
 	}
 	// Output:
 	// addresses https://github.com/moul/depviz/issues/42
-	// fixes https://github.com/moul/depviz/issues/58
-	// fixes https://github.com/moul/depviz/issues/1337
 	// blocks https://github.com/moul/depviz/issues/45
 	// blocks https://github.com/moul/depviz/issues/46
 	// depends-on https://github.com/moul/depviz/issues/42
+	// fixes https://github.com/moul/depviz/issues/1337
+	// fixes https://github.com/moul/depviz/issues/58
 }

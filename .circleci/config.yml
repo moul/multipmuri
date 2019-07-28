@@ -9,7 +9,7 @@ executors:
       GO111MODULE: "on"
 
 orbs:
-  moul: moul/build@1.3.0
+  moul: moul/build@1.4.0
   codecov: codecov/codecov@1.0.2
 
 jobs:
@@ -18,10 +18,10 @@ jobs:
     steps:
       - checkout
       - moul/install_retry
-      - run: /tmp/retry -m 3 go mod download
-      - run: /tmp/retry -m 3 make test
+      - run: retry -m 3 go mod download
+      - run: retry -m 3 make test
       - moul/install_golangci-lint
-      - run: PATH=$PATH:$(pwd)/bin /tmp/retry -m 3 make lint
+      - run: PATH=$PATH:$(pwd)/bin retry -m 3 make lint
       - codecov/upload:
           file: coverage.txt
 
