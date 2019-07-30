@@ -10,7 +10,7 @@ executors:
 
 orbs:
   moul: moul/build@1.4.0
-  codecov: codecov/codecov@1.0.2
+  codecov: codecov/codecov@1.0.5
 
 jobs:
   go-build:
