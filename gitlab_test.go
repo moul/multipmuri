@@ -3,7 +3,7 @@ package multipmuri
 import "fmt"
 
 func ExampleNewGitLabIssue() {
-	entity := NewGitLabIssue("gitlab.com", "moul", "depviz", "42")
+	entity := NewGitLabIssue("", "moul", "depviz", "42")
 	fmt.Println("entity")
 	fmt.Println(" ", entity.Canonical())
 	fmt.Println(" ", entity.Kind())
@@ -27,6 +27,7 @@ func ExampleNewGitLabIssue() {
 		}
 		fmt.Printf("  %-42s -> %s\n", name, rel.Canonical())
 	}
+	fmt.Println("repo:", entity.RepoEntity().Canonical())
 	// Output:
 	// entity
 	//   https://gitlab.com/moul/depviz/issues/42
@@ -40,6 +41,7 @@ func ExampleNewGitLabIssue() {
 	//   https://gitlab.com/moul2/depviz2#42        -> https://gitlab.com/moul2/depviz2/issues/42
 	//   https://example.com/a/b#42                 -> error: ambiguous uri "https://example.com/a/b#42"
 	//   https://gitlab.com/moul/depviz/issues/42   -> https://gitlab.com/moul/depviz/issues/42
+	// repo: https://gitlab.com/moul/depviz
 }
 
 func ExampleNewGitLabService() {

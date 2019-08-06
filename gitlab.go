@@ -12,13 +12,13 @@ import (
 
 type GitLabService struct {
 	Service
-	*withGitLabCommon
+	*withGitLabHostname
 }
 
 func NewGitLabService(hostname string) *GitLabService {
 	return &GitLabService{
-		Service:          &service{},
-		withGitLabCommon: &withGitLabCommon{hostname},
+		Service:            &service{},
+		withGitLabHostname: &withGitLabHostname{hostname},
 	}
 }
 
@@ -36,19 +36,13 @@ func (e GitLabService) RelDecodeString(input string) (Entity, error) {
 
 type GitLabIssue struct {
 	Issue
-	*withGitLabCommon
-	*withGitLabOwner
-	*withGitLabRepo
 	*withGitLabID
 }
 
 func NewGitLabIssue(hostname, owner, repo, id string) *GitLabIssue {
 	return &GitLabIssue{
-		Issue:            &issue{},
-		withGitLabCommon: &withGitLabCommon{hostname},
-		withGitLabOwner:  &withGitLabOwner{owner},
-		withGitLabRepo:   &withGitLabRepo{repo},
-		withGitLabID:     &withGitLabID{id},
+		Issue:        &issue{},
+		withGitLabID: &withGitLabID{hostname, owner, repo, id},
 	}
 }
 
@@ -66,19 +60,13 @@ func (e GitLabIssue) RelDecodeString(input string) (Entity, error) {
 
 type GitLabMilestone struct {
 	Milestone
-	*withGitLabCommon
-	*withGitLabOwner
-	*withGitLabRepo
 	*withGitLabID
 }
 
 func NewGitLabMilestone(hostname, owner, repo, id string) *GitLabMilestone {
 	return &GitLabMilestone{
-		Milestone:        &milestone{},
-		withGitLabCommon: &withGitLabCommon{hostname},
-		withGitLabOwner:  &withGitLabOwner{owner},
-		withGitLabRepo:   &withGitLabRepo{repo},
-		withGitLabID:     &withGitLabID{id},
+		Milestone:    &milestone{},
+		withGitLabID: &withGitLabID{hostname, owner, repo, id},
 	}
 }
 
@@ -96,19 +84,13 @@ func (e GitLabMilestone) RelDecodeString(input string) (Entity, error) {
 
 type GitLabMergeRequest struct {
 	MergeRequest
-	*withGitLabCommon
-	*withGitLabOwner
-	*withGitLabRepo
 	*withGitLabID
 }
 
 func NewGitLabMergeRequest(hostname, owner, repo, id string) *GitLabMergeRequest {
 	return &GitLabMergeRequest{
-		MergeRequest:     &mergeRequest{},
-		withGitLabCommon: &withGitLabCommon{hostname},
-		withGitLabOwner:  &withGitLabOwner{owner},
-		withGitLabRepo:   &withGitLabRepo{repo},
-		withGitLabID:     &withGitLabID{id},
+		MergeRequest: &mergeRequest{},
+		withGitLabID: &withGitLabID{hostname, owner, repo, id},
 	}
 }
 
@@ -126,15 +108,13 @@ func (e GitLabMergeRequest) RelDecodeString(input string) (Entity, error) {
 
 type GitLabUserOrOrganization struct {
 	UserOrOrganization
-	*withGitLabCommon
 	*withGitLabOwner
 }
 
 func NewGitLabUserOrOrganization(hostname, owner string) *GitLabUserOrOrganization {
 	return &GitLabUserOrOrganization{
 		UserOrOrganization: &userOrOrganization{},
-		withGitLabCommon:   &withGitLabCommon{hostname},
-		withGitLabOwner:    &withGitLabOwner{owner},
+		withGitLabOwner:    &withGitLabOwner{hostname, owner},
 	}
 }
 
@@ -152,17 +132,13 @@ func (e GitLabUserOrOrganization) RelDecodeString(input string) (Entity, error) 
 
 type GitLabOrganizationOrRepo struct {
 	OrganizationOrProject
-	*withGitLabCommon
-	*withGitLabOwner
 	*withGitLabRepo
 }
 
 func NewGitLabOrganizationOrRepo(hostname, owner, repo string) *GitLabOrganizationOrRepo {
 	return &GitLabOrganizationOrRepo{
 		OrganizationOrProject: &organizationOrProject{},
-		withGitLabCommon:      &withGitLabCommon{hostname},
-		withGitLabOwner:       &withGitLabOwner{owner},
-		withGitLabRepo:        &withGitLabRepo{repo},
+		withGitLabRepo:        &withGitLabRepo{hostname, owner, repo},
 	}
 }
 
@@ -180,17 +156,13 @@ func (e GitLabOrganizationOrRepo) RelDecodeString(input string) (Entity, error) 
 
 type GitLabRepo struct {
 	Project
-	*withGitLabCommon
-	*withGitLabOwner
 	*withGitLabRepo
 }
 
 func NewGitLabRepo(hostname, owner, repo string) *GitLabRepo {
 	return &GitLabRepo{
-		Project:          &project{},
-		withGitLabCommon: &withGitLabCommon{hostname},
-		withGitLabOwner:  &withGitLabOwner{owner},
-		withGitLabRepo:   &withGitLabRepo{repo},
+		Project:        &project{},
+		withGitLabRepo: &withGitLabRepo{hostname, owner, repo},
 	}
 }
 
@@ -206,27 +178,36 @@ func (e GitLabRepo) RelDecodeString(input string) (Entity, error) {
 // GitLabCommon
 //
 
-type withGitLabCommon struct{ hostname string }
+type withGitLabHostname struct{ hostname string }
 
-func (e *withGitLabCommon) Provider() Provider { return GitLabProvider }
-func (e *withGitLabCommon) Hostname() string {
-	if e.hostname == "" {
-		return "gitlab.com"
-	}
-	return e.hostname
+func (e *withGitLabHostname) Provider() Provider { return GitLabProvider }
+func (e *withGitLabHostname) Hostname() string   { return gitlabHostname(e.hostname) }
+
+type withGitLabOwner struct{ hostname, owner string }
+
+func (e *withGitLabOwner) Provider() Provider { return GitLabProvider }
+func (e *withGitLabOwner) Hostname() string   { return gitlabHostname(e.hostname) }
+func (e *withGitLabOwner) Owner() string      { return e.owner }
+func (e *withGitLabOwner) RepoEntity(repo string) *GitLabRepo {
+	return NewGitLabRepo(e.hostname, e.owner, repo)
 }
 
-type withGitLabOwner struct{ owner string }
+type withGitLabRepo struct{ hostname, owner, repo string }
 
-func (e *withGitLabOwner) Owner() string { return e.owner }
+func (e *withGitLabRepo) Provider() Provider      { return GitLabProvider }
+func (e *withGitLabRepo) Hostname() string        { return gitlabHostname(e.hostname) }
+func (e *withGitLabRepo) Owner() string           { return e.owner }
+func (e *withGitLabRepo) Repo() string            { return e.repo }
+func (e *withGitLabRepo) RepoEntity() *GitLabRepo { return NewGitLabRepo(e.hostname, e.owner, e.repo) }
 
-type withGitLabRepo struct{ repo string }
+type withGitLabID struct{ hostname, owner, repo, id string }
 
-func (e *withGitLabRepo) Repo() string { return e.repo }
-
-type withGitLabID struct{ id string }
-
-func (e *withGitLabID) ID() string { return e.id }
+func (e *withGitLabID) Provider() Provider      { return GitLabProvider }
+func (e *withGitLabID) Hostname() string        { return gitlabHostname(e.hostname) }
+func (e *withGitLabID) Owner() string           { return e.owner }
+func (e *withGitLabID) Repo() string            { return e.repo }
+func (e *withGitLabID) ID() string              { return e.id }
+func (e *withGitLabID) RepoEntity() *GitLabRepo { return NewGitLabRepo(e.hostname, e.owner, e.repo) }
 
 //
 // Helpers
@@ -318,4 +299,11 @@ func gitLabRelDecodeString(hostname, owner, repo, input string, force bool) (Ent
 	}
 
 	return nil, fmt.Errorf("failed to parse %q", input)
+}
+
+func gitlabHostname(input string) string {
+	if input == "" {
+		return "gitlab.com"
+	}
+	return input
 }
