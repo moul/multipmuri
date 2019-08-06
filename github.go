@@ -12,13 +12,13 @@ import (
 
 type GitHubService struct {
 	Service
-	*withGitHubCommon
+	*withGitHubHostname
 }
 
 func NewGitHubService(hostname string) *GitHubService {
 	return &GitHubService{
-		Service:          &service{},
-		withGitHubCommon: &withGitHubCommon{hostname},
+		Service:            &service{},
+		withGitHubHostname: &withGitHubHostname{hostname},
 	}
 }
 
@@ -36,19 +36,13 @@ func (e GitHubService) RelDecodeString(input string) (Entity, error) {
 
 type GitHubIssue struct {
 	Issue
-	*withGitHubCommon
-	*withGitHubOwner
-	*withGitHubRepo
 	*withGitHubID
 }
 
 func NewGitHubIssue(hostname, owner, repo, id string) *GitHubIssue {
 	return &GitHubIssue{
-		Issue:            &issue{},
-		withGitHubCommon: &withGitHubCommon{hostname},
-		withGitHubOwner:  &withGitHubOwner{owner},
-		withGitHubRepo:   &withGitHubRepo{repo},
-		withGitHubID:     &withGitHubID{id},
+		Issue:        &issue{},
+		withGitHubID: &withGitHubID{hostname, owner, repo, id},
 	}
 }
 
@@ -66,19 +60,13 @@ func (e GitHubIssue) RelDecodeString(input string) (Entity, error) {
 
 type GitHubMilestone struct {
 	Milestone
-	*withGitHubCommon
-	*withGitHubOwner
-	*withGitHubRepo
 	*withGitHubID
 }
 
 func NewGitHubMilestone(hostname, owner, repo, id string) *GitHubMilestone {
 	return &GitHubMilestone{
-		Milestone:        &milestone{},
-		withGitHubCommon: &withGitHubCommon{hostname},
-		withGitHubOwner:  &withGitHubOwner{owner},
-		withGitHubRepo:   &withGitHubRepo{repo},
-		withGitHubID:     &withGitHubID{id},
+		Milestone:    &milestone{},
+		withGitHubID: &withGitHubID{hostname, owner, repo, id},
 	}
 }
 
@@ -96,19 +84,13 @@ func (e GitHubMilestone) RelDecodeString(input string) (Entity, error) {
 
 type GitHubPullRequest struct {
 	MergeRequest
-	*withGitHubCommon
-	*withGitHubOwner
-	*withGitHubRepo
 	*withGitHubID
 }
 
 func NewGitHubPullRequest(hostname, owner, repo, id string) *GitHubPullRequest {
 	return &GitHubPullRequest{
-		MergeRequest:     &mergeRequest{},
-		withGitHubCommon: &withGitHubCommon{hostname},
-		withGitHubOwner:  &withGitHubOwner{owner},
-		withGitHubRepo:   &withGitHubRepo{repo},
-		withGitHubID:     &withGitHubID{id},
+		MergeRequest: &mergeRequest{},
+		withGitHubID: &withGitHubID{hostname, owner, repo, id},
 	}
 }
 
@@ -126,19 +108,13 @@ func (e GitHubPullRequest) RelDecodeString(input string) (Entity, error) {
 
 type GitHubIssueOrPullRequest struct {
 	IssueOrMergeRequest
-	*withGitHubCommon
-	*withGitHubOwner
-	*withGitHubRepo
 	*withGitHubID
 }
 
 func NewGitHubIssueOrPullRequest(hostname, owner, repo, id string) *GitHubIssueOrPullRequest {
 	return &GitHubIssueOrPullRequest{
 		IssueOrMergeRequest: &issueOrMergeRequest{},
-		withGitHubCommon:    &withGitHubCommon{hostname},
-		withGitHubOwner:     &withGitHubOwner{owner},
-		withGitHubRepo:      &withGitHubRepo{repo},
-		withGitHubID:        &withGitHubID{id},
+		withGitHubID:        &withGitHubID{hostname, owner, repo, id},
 	}
 }
 
@@ -151,28 +127,26 @@ func (e GitHubIssueOrPullRequest) RelDecodeString(input string) (Entity, error) 
 }
 
 //
-// GitHubUserOrOrganization
+// GitHubOwner
 //
 
-type GitHubUserOrOrganization struct {
+type GitHubOwner struct {
 	UserOrOrganization
-	*withGitHubCommon
 	*withGitHubOwner
 }
 
-func NewGitHubUserOrOrganization(hostname, owner string) *GitHubUserOrOrganization {
-	return &GitHubUserOrOrganization{
+func NewGitHubOwner(hostname, owner string) *GitHubOwner {
+	return &GitHubOwner{
 		UserOrOrganization: &userOrOrganization{},
-		withGitHubCommon:   &withGitHubCommon{hostname},
-		withGitHubOwner:    &withGitHubOwner{owner},
+		withGitHubOwner:    &withGitHubOwner{hostname, owner},
 	}
 }
 
-func (e GitHubUserOrOrganization) Canonical() string {
+func (e GitHubOwner) Canonical() string {
 	return fmt.Sprintf("https://%s/%s", e.Hostname(), e.Owner())
 }
 
-func (e GitHubUserOrOrganization) RelDecodeString(input string) (Entity, error) {
+func (e GitHubOwner) RelDecodeString(input string) (Entity, error) {
 	return gitHubRelDecodeString(e.Hostname(), e.Owner(), "", input, false)
 }
 
@@ -182,17 +156,13 @@ func (e GitHubUserOrOrganization) RelDecodeString(input string) (Entity, error) 
 
 type GitHubRepo struct {
 	Project
-	*withGitHubCommon
-	*withGitHubOwner
 	*withGitHubRepo
 }
 
 func NewGitHubRepo(hostname, owner, repo string) *GitHubRepo {
 	return &GitHubRepo{
-		Project:          &project{},
-		withGitHubCommon: &withGitHubCommon{hostname},
-		withGitHubOwner:  &withGitHubOwner{owner},
-		withGitHubRepo:   &withGitHubRepo{repo},
+		Project:        &project{},
+		withGitHubRepo: &withGitHubRepo{hostname, owner, repo},
 	}
 }
 
@@ -208,27 +178,49 @@ func (e GitHubRepo) RelDecodeString(input string) (Entity, error) {
 // GitHubCommon
 //
 
-type withGitHubCommon struct{ hostname string }
+type withGitHubHostname struct{ hostname string }
 
-func (e *withGitHubCommon) Provider() Provider { return GitHubProvider }
-func (e *withGitHubCommon) Hostname() string {
-	if e.hostname == "" {
-		return "github.com"
-	}
-	return e.hostname
+func (e *withGitHubHostname) Provider() Provider { return GitHubProvider }
+func (e *withGitHubHostname) Hostname() string   { return githubHostname(e.hostname) }
+func (e *withGitHubHostname) OwnerEntity(owner string) *GitHubOwner {
+	return NewGitHubOwner(e.hostname, owner)
 }
 
-type withGitHubOwner struct{ owner string }
+type withGitHubOwner struct{ hostname, owner string }
 
-func (e *withGitHubOwner) Owner() string { return e.owner }
+func (e *withGitHubOwner) Provider() Provider            { return GitHubProvider }
+func (e *withGitHubOwner) Hostname() string              { return githubHostname(e.hostname) }
+func (e *withGitHubOwner) Owner() string                 { return e.owner }
+func (e *withGitHubOwner) ServiceEntity() *GitHubService { return NewGitHubService(e.hostname) }
+func (e *withGitHubOwner) RepoEntity(repo string) *GitHubRepo {
+	return NewGitHubRepo(e.hostname, e.owner, repo)
+}
 
-type withGitHubRepo struct{ repo string }
+type withGitHubRepo struct{ hostname, owner, repo string }
 
-func (e *withGitHubRepo) Repo() string { return e.repo }
+func (e *withGitHubRepo) Provider() Provider            { return GitHubProvider }
+func (e *withGitHubRepo) Hostname() string              { return githubHostname(e.hostname) }
+func (e *withGitHubRepo) Owner() string                 { return e.owner }
+func (e *withGitHubRepo) Repo() string                  { return e.repo }
+func (e *withGitHubRepo) ServiceEntity() *GitHubService { return NewGitHubService(e.hostname) }
+func (e *withGitHubRepo) OwnerEntity() *GitHubOwner     { return NewGitHubOwner(e.hostname, e.owner) }
+func (e *withGitHubRepo) IssueEntity(id string) *GitHubIssue {
+	return NewGitHubIssue(e.hostname, e.owner, e.repo, id)
+}
+func (e *withGitHubRepo) MilestoneEntity(id string) *GitHubMilestone {
+	return NewGitHubMilestone(e.hostname, e.owner, e.repo, id)
+}
 
-type withGitHubID struct{ id string }
+type withGitHubID struct{ hostname, owner, repo, id string }
 
-func (e *withGitHubID) ID() string { return e.id }
+func (e *withGitHubID) Provider() Provider            { return GitHubProvider }
+func (e *withGitHubID) Hostname() string              { return githubHostname(e.hostname) }
+func (e *withGitHubID) Owner() string                 { return e.owner }
+func (e *withGitHubID) Repo() string                  { return e.repo }
+func (e *withGitHubID) ID() string                    { return e.id }
+func (e *withGitHubID) ServiceEntity() *GitHubService { return NewGitHubService(e.hostname) }
+func (e *withGitHubID) OwnerEntity() *GitHubOwner     { return NewGitHubOwner(e.hostname, e.owner) }
+func (e *withGitHubID) RepoEntity() *GitHubRepo       { return NewGitHubRepo(e.hostname, e.owner, e.repo) }
 
 //
 // Helpers
@@ -269,10 +261,10 @@ func gitHubRelDecodeString(hostname, owner, repo, input string, force bool) (Ent
 	switch len(parts) {
 	case 1:
 		if u.Host != "" && parts[0][0] != '@' {
-			return NewGitHubUserOrOrganization(hostname, parts[0]), nil
+			return NewGitHubOwner(hostname, parts[0]), nil
 		}
 		if parts[0][0] == '@' {
-			return NewGitHubUserOrOrganization(hostname, parts[0][1:]), nil
+			return NewGitHubOwner(hostname, parts[0][1:]), nil
 		}
 	case 2:
 		// FIXME: if starting with @ -> it's a team
@@ -291,4 +283,11 @@ func gitHubRelDecodeString(hostname, owner, repo, input string, force bool) (Ent
 	}
 
 	return nil, fmt.Errorf("failed to parse %q", input)
+}
+
+func githubHostname(input string) string {
+	if input == "" {
+		return "github.com"
+	}
+	return input
 }

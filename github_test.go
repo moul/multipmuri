@@ -3,7 +3,7 @@ package multipmuri
 import "fmt"
 
 func ExampleNewGitHubIssue() {
-	entity := NewGitHubIssue("github.com", "moul", "depviz", "42")
+	entity := NewGitHubIssue("", "moul", "depviz", "42")
 	fmt.Println("entity")
 	fmt.Println(" ", entity.Canonical())
 	fmt.Println(" ", entity.Kind())
@@ -27,6 +27,20 @@ func ExampleNewGitHubIssue() {
 		}
 		fmt.Printf("  %-42s -> %s\n", name, rel.Canonical())
 	}
+	fmt.Println("repo:", entity.RepoEntity().Canonical())
+	fmt.Println("owner:", entity.OwnerEntity().Canonical())
+	fmt.Println("complex relationship:",
+		entity.OwnerEntity().
+			ServiceEntity().
+			OwnerEntity("test1").
+			RepoEntity("test2").
+			IssueEntity("42").
+			RepoEntity().
+			ServiceEntity().
+			OwnerEntity("test3").
+			RepoEntity("test4").
+			MilestoneEntity("42").
+			Canonical())
 	// Output:
 	// entity
 	//   https://github.com/moul/depviz/issues/42
@@ -40,6 +54,9 @@ func ExampleNewGitHubIssue() {
 	//   https://github.com/moul2/depviz2#42        -> https://github.com/moul2/depviz2/issues/42
 	//   https://example.com/a/b#42                 -> error: ambiguous uri "https://example.com/a/b#42"
 	//   https://gitlab.com/moul/depviz/issues/42   -> https://gitlab.com/moul/depviz/issues/42
+	// repo: https://github.com/moul/depviz
+	// owner: https://github.com/moul
+	// complex relationship: https://github.com/test3/test4/milestone/42
 }
 
 func ExampleNewGitHubService() {
