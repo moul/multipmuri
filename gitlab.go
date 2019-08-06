@@ -180,25 +180,28 @@ func (e GitLabRepo) RelDecodeString(input string) (Entity, error) {
 
 type withGitLabHostname struct{ hostname string }
 
-func (e *withGitLabHostname) Provider() Provider { return GitLabProvider }
-func (e *withGitLabHostname) Hostname() string   { return gitlabHostname(e.hostname) }
+func (e *withGitLabHostname) Provider() Provider            { return GitLabProvider }
+func (e *withGitLabHostname) Hostname() string              { return gitlabHostname(e.hostname) }
+func (e *withGitLabHostname) ServiceEntity() *GitLabService { return NewGitLabService(e.hostname) }
 
 type withGitLabOwner struct{ hostname, owner string }
 
-func (e *withGitLabOwner) Provider() Provider { return GitLabProvider }
-func (e *withGitLabOwner) Hostname() string   { return gitlabHostname(e.hostname) }
-func (e *withGitLabOwner) Owner() string      { return e.owner }
+func (e *withGitLabOwner) Provider() Provider            { return GitLabProvider }
+func (e *withGitLabOwner) Hostname() string              { return gitlabHostname(e.hostname) }
+func (e *withGitLabOwner) Owner() string                 { return e.owner }
+func (e *withGitLabOwner) ServiceEntity() *GitLabService { return NewGitLabService(e.hostname) }
 func (e *withGitLabOwner) RepoEntity(repo string) *GitLabRepo {
 	return NewGitLabRepo(e.hostname, e.owner, repo)
 }
 
 type withGitLabRepo struct{ hostname, owner, repo string }
 
-func (e *withGitLabRepo) Provider() Provider      { return GitLabProvider }
-func (e *withGitLabRepo) Hostname() string        { return gitlabHostname(e.hostname) }
-func (e *withGitLabRepo) Owner() string           { return e.owner }
-func (e *withGitLabRepo) Repo() string            { return e.repo }
-func (e *withGitLabRepo) RepoEntity() *GitLabRepo { return NewGitLabRepo(e.hostname, e.owner, e.repo) }
+func (e *withGitLabRepo) Provider() Provider            { return GitLabProvider }
+func (e *withGitLabRepo) Hostname() string              { return gitlabHostname(e.hostname) }
+func (e *withGitLabRepo) Owner() string                 { return e.owner }
+func (e *withGitLabRepo) Repo() string                  { return e.repo }
+func (e *withGitLabRepo) ServiceEntity() *GitLabService { return NewGitLabService(e.hostname) }
+func (e *withGitLabRepo) RepoEntity() *GitLabRepo       { return NewGitLabRepo(e.hostname, e.owner, e.repo) }
 
 type withGitLabID struct{ hostname, owner, repo, id string }
 
