@@ -204,6 +204,9 @@ func (e *withGitHubRepo) Owner() string                 { return e.owner }
 func (e *withGitHubRepo) Repo() string                  { return e.repo }
 func (e *withGitHubRepo) ServiceEntity() *GitHubService { return NewGitHubService(e.hostname) }
 func (e *withGitHubRepo) OwnerEntity() *GitHubOwner     { return NewGitHubOwner(e.hostname, e.owner) }
+func (e *withGitHubRepo) RepoEntity() *GitHubRepo {
+	return NewGitHubRepo(e.hostname, e.owner, e.repo)
+}
 func (e *withGitHubRepo) IssueEntity(id string) *GitHubIssue {
 	return NewGitHubIssue(e.hostname, e.owner, e.repo, id)
 }
