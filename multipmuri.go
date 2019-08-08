@@ -20,6 +20,12 @@ type WithProvider interface {
 }
 
 //
+// Entities
+//
+
+type Entities []Entity
+
+//
 // Enums
 //
 
