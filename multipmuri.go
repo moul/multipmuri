@@ -7,8 +7,10 @@ package multipmuri
 type Entity interface {
 	WithKind
 	WithProvider
-	Canonical() string
 	RelDecodeString(string) (Entity, error)
+	Equals(Entity) bool
+	Contains(Entity) bool
+	String() string
 }
 
 type WithKind interface {

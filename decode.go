@@ -14,9 +14,11 @@ type unknownEntity struct{}
 
 func NewUnknownEntity() Entity { return &unknownEntity{} }
 
-func (unknownEntity) Kind() Kind         { return UnknownKind }
-func (unknownEntity) Provider() Provider { return UnknownProvider }
-func (unknownEntity) Canonical() string  { return "" }
+func (unknownEntity) Kind() Kind           { return UnknownKind }
+func (unknownEntity) Provider() Provider   { return UnknownProvider }
+func (unknownEntity) String() string       { return "" }
+func (unknownEntity) Equals(Entity) bool   { return false }
+func (unknownEntity) Contains(Entity) bool { return false }
 func (unknownEntity) RelDecodeString(input string) (Entity, error) {
 	u, err := url.Parse(input)
 	if err != nil {

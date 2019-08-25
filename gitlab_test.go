@@ -5,7 +5,7 @@ import "fmt"
 func ExampleNewGitLabIssue() {
 	entity := NewGitLabIssue("", "moul", "depviz", "42")
 	fmt.Println("entity")
-	fmt.Println(" ", entity.Canonical())
+	fmt.Println(" ", entity.String())
 	fmt.Println(" ", entity.Kind())
 	fmt.Println(" ", entity.Provider())
 
@@ -25,9 +25,9 @@ func ExampleNewGitLabIssue() {
 			fmt.Printf("  %-42s -> error: %v\n", name, err)
 			continue
 		}
-		fmt.Printf("  %-42s -> %s\n", name, rel.Canonical())
+		fmt.Printf("  %-42s -> %s\n", name, rel.String())
 	}
-	fmt.Println("repo:", entity.RepoEntity().Canonical())
+	fmt.Println("repo:", entity.RepoEntity().String())
 	// Output:
 	// entity
 	//   https://gitlab.com/moul/depviz/issues/42
@@ -47,7 +47,7 @@ func ExampleNewGitLabIssue() {
 func ExampleNewGitLabService() {
 	entity := NewGitLabService("gitlab.com")
 	fmt.Println("entity")
-	fmt.Println(" ", entity.Canonical())
+	fmt.Println(" ", entity.String())
 	fmt.Println(" ", entity.Kind())
 	fmt.Println(" ", entity.Provider())
 
@@ -82,7 +82,7 @@ func ExampleNewGitLabService() {
 			fmt.Printf("  %-42s -> error: %v\n", name, err)
 			continue
 		}
-		fmt.Printf("  %-42s -> %-48s %s\n", name, rel.Canonical(), rel.Kind())
+		fmt.Printf("  %-42s -> %-48s %s\n", name, rel.String(), rel.Kind())
 	}
 	// Output:
 	// entity
@@ -118,7 +118,7 @@ func ExampleNewGitLabService() {
 func ExampleNewGitLabService_Enterprise() {
 	entity := NewGitLabService("ge.company.com")
 	fmt.Println("entity")
-	fmt.Println(" ", entity.Canonical())
+	fmt.Println(" ", entity.String())
 	fmt.Println(" ", entity.Kind())
 	fmt.Println(" ", entity.Provider())
 
@@ -146,7 +146,7 @@ func ExampleNewGitLabService_Enterprise() {
 			fmt.Printf("  %-42s -> error: %v\n", name, err)
 			continue
 		}
-		fmt.Printf("  %-42s -> %-43s %s\n", name, rel.Canonical(), rel.Kind())
+		fmt.Printf("  %-42s -> %-43s %s\n", name, rel.String(), rel.Kind())
 	}
 	// Output:
 	// entity

@@ -22,12 +22,30 @@ func NewGitLabService(hostname string) *GitLabService {
 	}
 }
 
-func (e GitLabService) Canonical() string {
+func (e GitLabService) String() string {
 	return fmt.Sprintf("https://%s/", e.Hostname())
 }
 
 func (e GitLabService) RelDecodeString(input string) (Entity, error) {
 	return gitLabRelDecodeString(e.Hostname(), "", "", input, false)
+}
+
+func (e GitLabService) Equals(other Entity) bool {
+	if typed, valid := other.(*GitLabService); valid {
+		return e.Hostname() == typed.Hostname()
+	}
+	return false
+}
+
+func (e GitLabService) Contains(other Entity) bool {
+	switch other.(type) {
+	case *GitLabRepo, *GitLabOwnerOrRepo, *GitLabMilestone, *GitLabIssue, *GitLabMergeRequest, *GitLabOwner:
+		// FIXME: OrganizationOrRepo is not fully checked
+		if typed, valid := other.(hasWithGitLabHostname); valid {
+			return e.Hostname() == typed.Hostname()
+		}
+	}
+	return false
 }
 
 //
@@ -46,12 +64,26 @@ func NewGitLabIssue(hostname, owner, repo, id string) *GitLabIssue {
 	}
 }
 
-func (e GitLabIssue) Canonical() string {
+func (e GitLabIssue) String() string {
 	return fmt.Sprintf("https://%s/%s/%s/issues/%s", e.Hostname(), e.Owner(), e.Repo(), e.ID())
 }
 
 func (e GitLabIssue) RelDecodeString(input string) (Entity, error) {
 	return gitLabRelDecodeString(e.Hostname(), e.Owner(), e.Repo(), input, false)
+}
+
+func (e GitLabIssue) Equals(other Entity) bool {
+	if typed, valid := other.(*GitLabIssue); valid {
+		return e.Hostname() == typed.Hostname() &&
+			e.Owner() == typed.Owner() &&
+			e.Repo() == typed.Repo() &&
+			e.ID() == typed.ID()
+	}
+	return false
+}
+
+func (e GitLabIssue) Contains(other Entity) bool {
+	return false
 }
 
 //
@@ -70,12 +102,26 @@ func NewGitLabMilestone(hostname, owner, repo, id string) *GitLabMilestone {
 	}
 }
 
-func (e GitLabMilestone) Canonical() string {
+func (e GitLabMilestone) String() string {
 	return fmt.Sprintf("https://%s/%s/%s/-/milestones/%s", e.Hostname(), e.Owner(), e.Repo(), e.ID())
 }
 
 func (e GitLabMilestone) RelDecodeString(input string) (Entity, error) {
 	return gitLabRelDecodeString(e.Hostname(), e.Owner(), e.Repo(), input, false)
+}
+
+func (e GitLabMilestone) Equals(other Entity) bool {
+	if typed, valid := other.(*GitLabMilestone); valid {
+		return e.Hostname() == typed.Hostname() &&
+			e.Owner() == typed.Owner() &&
+			e.Repo() == typed.Repo() &&
+			e.ID() == typed.ID()
+	}
+	return false
+}
+
+func (e GitLabMilestone) Contains(other Entity) bool {
+	return false
 }
 
 //
@@ -94,7 +140,7 @@ func NewGitLabMergeRequest(hostname, owner, repo, id string) *GitLabMergeRequest
 	}
 }
 
-func (e GitLabMergeRequest) Canonical() string {
+func (e GitLabMergeRequest) String() string {
 	return fmt.Sprintf("https://%s/%s/%s/merge_requests/%s", e.Hostname(), e.Owner(), e.Repo(), e.ID())
 }
 
@@ -102,52 +148,111 @@ func (e GitLabMergeRequest) RelDecodeString(input string) (Entity, error) {
 	return gitLabRelDecodeString(e.Hostname(), e.Owner(), e.Repo(), input, false)
 }
 
+func (e GitLabMergeRequest) Equals(other Entity) bool {
+	if typed, valid := other.(*GitLabMergeRequest); valid {
+		return e.Hostname() == typed.Hostname() &&
+			e.Owner() == typed.Owner() &&
+			e.Repo() == typed.Repo() &&
+			e.ID() == typed.ID()
+	}
+	return false
+}
+
+func (e GitLabMergeRequest) Contains(other Entity) bool {
+	return false
+}
+
 //
-// GitLabUserOrOrganization
+// GitLabOwner
 //
 
-type GitLabUserOrOrganization struct {
+type GitLabOwner struct {
 	UserOrOrganization
 	*withGitLabOwner
 }
 
-func NewGitLabUserOrOrganization(hostname, owner string) *GitLabUserOrOrganization {
-	return &GitLabUserOrOrganization{
+func NewGitLabOwner(hostname, owner string) *GitLabOwner {
+	return &GitLabOwner{
 		UserOrOrganization: &userOrOrganization{},
 		withGitLabOwner:    &withGitLabOwner{hostname, owner},
 	}
 }
 
-func (e GitLabUserOrOrganization) Canonical() string {
+func (e GitLabOwner) String() string {
 	return fmt.Sprintf("https://%s/%s", e.Hostname(), e.Owner())
 }
 
-func (e GitLabUserOrOrganization) RelDecodeString(input string) (Entity, error) {
+func (e GitLabOwner) RelDecodeString(input string) (Entity, error) {
 	return gitLabRelDecodeString(e.Hostname(), e.Owner(), "", input, false)
 }
 
+func (e GitLabOwner) Equals(other Entity) bool {
+	if typed, valid := other.(*GitLabOwner); valid {
+		return e.Hostname() == typed.Hostname() &&
+			e.Owner() == typed.Owner()
+	}
+	return false
+}
+
+func (e GitLabOwner) Contains(other Entity) bool {
+	switch other.(type) {
+	case *GitLabRepo, *GitLabOwnerOrRepo, *GitLabMilestone, *GitLabIssue, *GitLabMergeRequest:
+		// FIXME: OrganizationOrRepo is not fully checked
+		if typed, valid := other.(hasWithGitLabOwner); valid {
+			return e.Hostname() == typed.Hostname() &&
+				e.Owner() == typed.Owner()
+		}
+	}
+	return false
+}
+
 //
-// GitLabUserOrOrganization
+// GitLabOwner
 //
 
-type GitLabOrganizationOrRepo struct {
+type GitLabOwnerOrRepo struct {
 	OrganizationOrProject
 	*withGitLabRepo
 }
 
-func NewGitLabOrganizationOrRepo(hostname, owner, repo string) *GitLabOrganizationOrRepo {
-	return &GitLabOrganizationOrRepo{
+func NewGitLabOwnerOrRepo(hostname, owner, repo string) *GitLabOwnerOrRepo {
+	return &GitLabOwnerOrRepo{
 		OrganizationOrProject: &organizationOrProject{},
 		withGitLabRepo:        &withGitLabRepo{hostname, owner, repo},
 	}
 }
 
-func (e GitLabOrganizationOrRepo) Canonical() string {
+func (e GitLabOwnerOrRepo) String() string {
 	return fmt.Sprintf("https://%s/%s/%s", e.Hostname(), e.Owner(), e.Repo())
 }
 
-func (e GitLabOrganizationOrRepo) RelDecodeString(input string) (Entity, error) {
+func (e GitLabOwnerOrRepo) RelDecodeString(input string) (Entity, error) {
 	return gitLabRelDecodeString(e.Hostname(), e.Owner(), e.Repo(), input, false)
+}
+
+func (e GitLabOwnerOrRepo) Equals(other Entity) bool {
+	switch other.(type) {
+	case *GitLabOwnerOrRepo, *GitLabRepo:
+		if typed, valid := other.(hasWithGitLabRepo); valid {
+			return e.Hostname() == typed.Hostname() &&
+				e.Owner() == typed.Owner() &&
+				e.Repo() == typed.Repo()
+		}
+	}
+	return false
+}
+
+func (e GitLabOwnerOrRepo) Contains(other Entity) bool {
+	// FIXME: check for GitLabRepo if GitLabOwnerOrRepo is actually a GitLabOwner
+	switch other.(type) {
+	case *GitLabMilestone, *GitLabIssue, *GitLabMergeRequest:
+		if typed, valid := other.(hasWithGitLabRepo); valid {
+			return e.Hostname() == typed.Hostname() &&
+				e.Owner() == typed.Owner() &&
+				e.Repo() == typed.Repo()
+		}
+	}
+	return false
 }
 
 //
@@ -166,7 +271,7 @@ func NewGitLabRepo(hostname, owner, repo string) *GitLabRepo {
 	}
 }
 
-func (e GitLabRepo) Canonical() string {
+func (e GitLabRepo) String() string {
 	return fmt.Sprintf("https://%s/%s/%s", e.Hostname(), e.Owner(), e.Repo())
 }
 
@@ -174,15 +279,48 @@ func (e GitLabRepo) RelDecodeString(input string) (Entity, error) {
 	return gitLabRelDecodeString(e.Hostname(), e.Owner(), e.Repo(), input, false)
 }
 
+func (e GitLabRepo) Equals(other Entity) bool {
+	switch other.(type) {
+	case *GitLabOwnerOrRepo, *GitLabRepo:
+		if typed, valid := other.(hasWithGitLabRepo); valid {
+			return e.Hostname() == typed.Hostname() &&
+				e.Owner() == typed.Owner() &&
+				e.Repo() == typed.Repo()
+		}
+	}
+	return false
+}
+
+func (e GitLabRepo) Contains(other Entity) bool {
+	switch other.(type) {
+	case *GitLabMilestone, *GitLabIssue, *GitLabMergeRequest:
+		if typed, valid := other.(hasWithGitLabRepo); valid {
+			return e.Hostname() == typed.Hostname() &&
+				e.Owner() == typed.Owner() &&
+				e.Repo() == typed.Repo()
+		}
+	}
+	return false
+}
+
 //
 // GitLabCommon
 //
+
+type hasWithGitLabHostname interface {
+	Hostname() string
+}
 
 type withGitLabHostname struct{ hostname string }
 
 func (e *withGitLabHostname) Provider() Provider            { return GitLabProvider }
 func (e *withGitLabHostname) Hostname() string              { return gitlabHostname(e.hostname) }
 func (e *withGitLabHostname) ServiceEntity() *GitLabService { return NewGitLabService(e.hostname) }
+
+type hasWithGitLabOwner interface {
+	Hostname() string
+	Owner() string
+}
 
 type withGitLabOwner struct{ hostname, owner string }
 
@@ -194,6 +332,12 @@ func (e *withGitLabOwner) RepoEntity(repo string) *GitLabRepo {
 	return NewGitLabRepo(e.hostname, e.owner, repo)
 }
 
+type hasWithGitLabRepo interface {
+	Hostname() string
+	Owner() string
+	Repo() string
+}
+
 type withGitLabRepo struct{ hostname, owner, repo string }
 
 func (e *withGitLabRepo) Provider() Provider            { return GitLabProvider }
@@ -202,6 +346,15 @@ func (e *withGitLabRepo) Owner() string                 { return e.owner }
 func (e *withGitLabRepo) Repo() string                  { return e.repo }
 func (e *withGitLabRepo) ServiceEntity() *GitLabService { return NewGitLabService(e.hostname) }
 func (e *withGitLabRepo) RepoEntity() *GitLabRepo       { return NewGitLabRepo(e.hostname, e.owner, e.repo) }
+
+/* unused
+type hasWithGitLabID interface {
+	Hostname() string
+	Owner() string
+	Repo() string
+	ID() string
+}
+*/
 
 type withGitLabID struct{ hostname, owner, repo, id string }
 
@@ -259,14 +412,14 @@ func gitLabRelDecodeString(hostname, owner, repo, input string, force bool) (Ent
 	switch lenParts {
 	case 1: // user or org
 		if u.Host != "" && parts[0][0] != '@' {
-			return NewGitLabUserOrOrganization(hostname, parts[0]), nil
+			return NewGitLabOwner(hostname, parts[0]), nil
 		}
 		if parts[0][0] == '@' {
-			return NewGitLabUserOrOrganization(hostname, parts[0][1:]), nil
+			return NewGitLabOwner(hostname, parts[0][1:]), nil
 		}
 	case 2:
 		// org or rep
-		return NewGitLabOrganizationOrRepo(hostname, parts[0], parts[1]), nil
+		return NewGitLabOwnerOrRepo(hostname, parts[0], parts[1]), nil
 	case 0:
 		panic("should not happen")
 	default: // more than 2

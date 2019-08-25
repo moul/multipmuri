@@ -22,12 +22,29 @@ func NewGitHubService(hostname string) *GitHubService {
 	}
 }
 
-func (e GitHubService) Canonical() string {
+func (e GitHubService) String() string {
 	return fmt.Sprintf("https://%s/", e.Hostname())
 }
 
 func (e GitHubService) RelDecodeString(input string) (Entity, error) {
 	return gitHubRelDecodeString(e.Hostname(), "", "", input, false)
+}
+
+func (e GitHubService) Equals(other Entity) bool {
+	if typed, valid := other.(*GitHubService); valid {
+		return e.Hostname() == typed.Hostname()
+	}
+	return false
+}
+
+func (e GitHubService) Contains(other Entity) bool {
+	switch other.(type) {
+	case *GitHubRepo, *GitHubOwner, *GitHubMilestone, *GitHubIssueOrPullRequest, *GitHubIssue, *GitHubPullRequest:
+		if typed, valid := other.(hasWithGitHubHostname); valid {
+			return e.Hostname() == typed.Hostname()
+		}
+	}
+	return false
 }
 
 //
@@ -46,12 +63,29 @@ func NewGitHubIssue(hostname, owner, repo, id string) *GitHubIssue {
 	}
 }
 
-func (e GitHubIssue) Canonical() string {
+func (e GitHubIssue) String() string {
 	return fmt.Sprintf("https://%s/%s/%s/issues/%s", e.Hostname(), e.Owner(), e.Repo(), e.ID())
 }
 
 func (e GitHubIssue) RelDecodeString(input string) (Entity, error) {
 	return gitHubRelDecodeString(e.Hostname(), e.Owner(), e.Repo(), input, false)
+}
+
+func (e GitHubIssue) Equals(other Entity) bool {
+	switch other.(type) {
+	case *GitHubIssueOrPullRequest, *GitHubIssue, *GitHubPullRequest:
+		if typed, valid := other.(hasWithGitHubID); valid {
+			return e.Hostname() == typed.Hostname() &&
+				e.Owner() == typed.Owner() &&
+				e.Repo() == typed.Repo() &&
+				e.ID() == typed.ID()
+		}
+	}
+	return false
+}
+
+func (e GitHubIssue) Contains(other Entity) bool {
+	return false
 }
 
 //
@@ -70,12 +104,26 @@ func NewGitHubMilestone(hostname, owner, repo, id string) *GitHubMilestone {
 	}
 }
 
-func (e GitHubMilestone) Canonical() string {
+func (e GitHubMilestone) String() string {
 	return fmt.Sprintf("https://%s/%s/%s/milestone/%s", e.Hostname(), e.Owner(), e.Repo(), e.ID())
 }
 
 func (e GitHubMilestone) RelDecodeString(input string) (Entity, error) {
 	return gitHubRelDecodeString(e.Hostname(), e.Owner(), e.Repo(), input, false)
+}
+
+func (e GitHubMilestone) Equals(other Entity) bool {
+	if typed, valid := other.(*GitHubMilestone); valid {
+		return e.Hostname() == typed.Hostname() &&
+			e.Owner() == typed.Owner() &&
+			e.Repo() == typed.Repo() &&
+			e.ID() == typed.ID()
+	}
+	return false
+}
+
+func (e GitHubMilestone) Contains(other Entity) bool {
+	return false
 }
 
 //
@@ -94,12 +142,29 @@ func NewGitHubPullRequest(hostname, owner, repo, id string) *GitHubPullRequest {
 	}
 }
 
-func (e GitHubPullRequest) Canonical() string {
+func (e GitHubPullRequest) String() string {
 	return fmt.Sprintf("https://%s/%s/%s/pull/%s", e.Hostname(), e.Owner(), e.Repo(), e.ID())
 }
 
 func (e GitHubPullRequest) RelDecodeString(input string) (Entity, error) {
 	return gitHubRelDecodeString(e.Hostname(), e.Owner(), e.Repo(), input, false)
+}
+
+func (e GitHubPullRequest) Equals(other Entity) bool {
+	switch other.(type) {
+	case *GitHubIssueOrPullRequest, *GitHubIssue, *GitHubPullRequest:
+		if typed, valid := other.(hasWithGitHubID); valid {
+			return e.Hostname() == typed.Hostname() &&
+				e.Owner() == typed.Owner() &&
+				e.Repo() == typed.Repo() &&
+				e.ID() == typed.ID()
+		}
+	}
+	return false
+}
+
+func (e GitHubPullRequest) Contains(other Entity) bool {
+	return false
 }
 
 //
@@ -118,12 +183,29 @@ func NewGitHubIssueOrPullRequest(hostname, owner, repo, id string) *GitHubIssueO
 	}
 }
 
-func (e GitHubIssueOrPullRequest) Canonical() string {
+func (e GitHubIssueOrPullRequest) String() string {
 	return fmt.Sprintf("https://%s/%s/%s/issues/%s", e.Hostname(), e.Owner(), e.Repo(), e.ID())
 }
 
 func (e GitHubIssueOrPullRequest) RelDecodeString(input string) (Entity, error) {
 	return gitHubRelDecodeString(e.Hostname(), e.Owner(), e.Repo(), input, false)
+}
+
+func (e GitHubIssueOrPullRequest) Equals(other Entity) bool {
+	switch other.(type) {
+	case *GitHubIssueOrPullRequest, *GitHubIssue, *GitHubPullRequest:
+		if typed, valid := other.(hasWithGitHubID); valid {
+			return e.Hostname() == typed.Hostname() &&
+				e.Owner() == typed.Owner() &&
+				e.Repo() == typed.Repo() &&
+				e.ID() == typed.ID()
+		}
+	}
+	return false
+}
+
+func (e GitHubIssueOrPullRequest) Contains(other Entity) bool {
+	return false
 }
 
 //
@@ -142,12 +224,31 @@ func NewGitHubOwner(hostname, owner string) *GitHubOwner {
 	}
 }
 
-func (e GitHubOwner) Canonical() string {
+func (e GitHubOwner) String() string {
 	return fmt.Sprintf("https://%s/%s", e.Hostname(), e.Owner())
 }
 
 func (e GitHubOwner) RelDecodeString(input string) (Entity, error) {
 	return gitHubRelDecodeString(e.Hostname(), e.Owner(), "", input, false)
+}
+
+func (e GitHubOwner) Equals(other Entity) bool {
+	if typed, valid := other.(*GitHubOwner); valid {
+		return e.Hostname() == typed.Hostname() &&
+			e.Owner() == typed.Owner()
+	}
+	return false
+}
+
+func (e GitHubOwner) Contains(other Entity) bool {
+	switch other.(type) {
+	case *GitHubRepo, *GitHubMilestone, *GitHubIssueOrPullRequest, *GitHubIssue, *GitHubPullRequest:
+		if typed, valid := other.(hasWithGitHubOwner); valid {
+			return e.Hostname() == typed.Hostname() &&
+				e.Owner() == typed.Owner()
+		}
+	}
+	return false
 }
 
 //
@@ -166,7 +267,7 @@ func NewGitHubRepo(hostname, owner, repo string) *GitHubRepo {
 	}
 }
 
-func (e GitHubRepo) Canonical() string {
+func (e GitHubRepo) String() string {
 	return fmt.Sprintf("https://%s/%s/%s", e.Hostname(), e.Owner(), e.Repo())
 }
 
@@ -174,9 +275,34 @@ func (e GitHubRepo) RelDecodeString(input string) (Entity, error) {
 	return gitHubRelDecodeString(e.Hostname(), e.Owner(), e.Repo(), input, false)
 }
 
+func (e GitHubRepo) Equals(other Entity) bool {
+	if typed, valid := other.(*GitHubMilestone); valid {
+		return e.Hostname() == typed.Hostname() &&
+			e.Owner() == typed.Owner() &&
+			e.Repo() == typed.Repo()
+	}
+	return false
+}
+
+func (e GitHubRepo) Contains(other Entity) bool {
+	switch other.(type) {
+	case *GitHubMilestone, *GitHubIssueOrPullRequest, *GitHubIssue, *GitHubPullRequest:
+		if typed, valid := other.(hasWithGitHubRepo); valid {
+			return e.Hostname() == typed.Hostname() &&
+				e.Owner() == typed.Owner() &&
+				e.Repo() == typed.Repo()
+		}
+	}
+	return false
+}
+
 //
 // GitHubCommon
 //
+
+type hasWithGitHubHostname interface {
+	Hostname() string
+}
 
 type withGitHubHostname struct{ hostname string }
 
@@ -184,6 +310,11 @@ func (e *withGitHubHostname) Provider() Provider { return GitHubProvider }
 func (e *withGitHubHostname) Hostname() string   { return githubHostname(e.hostname) }
 func (e *withGitHubHostname) OwnerEntity(owner string) *GitHubOwner {
 	return NewGitHubOwner(e.hostname, owner)
+}
+
+type hasWithGitHubOwner interface {
+	Hostname() string
+	Owner() string
 }
 
 type withGitHubOwner struct{ hostname, owner string }
@@ -194,6 +325,12 @@ func (e *withGitHubOwner) Owner() string                 { return e.owner }
 func (e *withGitHubOwner) ServiceEntity() *GitHubService { return NewGitHubService(e.hostname) }
 func (e *withGitHubOwner) RepoEntity(repo string) *GitHubRepo {
 	return NewGitHubRepo(e.hostname, e.owner, repo)
+}
+
+type hasWithGitHubRepo interface {
+	Hostname() string
+	Owner() string
+	Repo() string
 }
 
 type withGitHubRepo struct{ hostname, owner, repo string }
@@ -212,6 +349,13 @@ func (e *withGitHubRepo) IssueEntity(id string) *GitHubIssue {
 }
 func (e *withGitHubRepo) MilestoneEntity(id string) *GitHubMilestone {
 	return NewGitHubMilestone(e.hostname, e.owner, e.repo, id)
+}
+
+type hasWithGitHubID interface {
+	Hostname() string
+	Owner() string
+	Repo() string
+	ID() string
 }
 
 type withGitHubID struct{ hostname, owner, repo, id string }
