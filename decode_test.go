@@ -27,7 +27,7 @@ func ExampleDecodeString() {
 			fmt.Printf("%-42s error: %v\n", uri, err)
 			continue
 		}
-		fmt.Printf("%-42s %-48s %-8s %s\n", uri, decoded.Canonical(), decoded.Provider(), decoded.Kind())
+		fmt.Printf("%-42s %-48s %-8s %s\n", uri, decoded.String(), decoded.Provider(), decoded.Kind())
 	}
 	// Output:
 	// https://github.com                         https://github.com/                              github   service

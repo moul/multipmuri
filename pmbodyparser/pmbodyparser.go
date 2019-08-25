@@ -27,7 +27,7 @@ type Relationship struct {
 }
 
 func (r Relationship) String() string {
-	return fmt.Sprintf("%s %s", r.Kind, r.Target.Canonical())
+	return fmt.Sprintf("%s %s", r.Kind, r.Target)
 }
 
 // FIXME: add isDependent / isDepending helpers
@@ -41,7 +41,7 @@ func (r Relationships) Less(i, j int) bool {
 	if r[j].Kind < r[i].Kind {
 		return false
 	}
-	return r[i].Target.Canonical() < r[j].Target.Canonical()
+	return r[i].Target.String() < r[j].Target.String()
 }
 
 func (r Relationships) Len() int {

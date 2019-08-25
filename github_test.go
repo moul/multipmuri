@@ -5,7 +5,7 @@ import "fmt"
 func ExampleNewGitHubIssue() {
 	entity := NewGitHubIssue("", "moul", "depviz", "42")
 	fmt.Println("entity")
-	fmt.Println(" ", entity.Canonical())
+	fmt.Println(" ", entity.String())
 	fmt.Println(" ", entity.Kind())
 	fmt.Println(" ", entity.Provider())
 
@@ -13,6 +13,7 @@ func ExampleNewGitHubIssue() {
 		"@moul",
 		"#4242",
 		"moul2/depviz2#43",
+		"moul/depviz#42",
 		"github.com/moul2/depviz2#42",
 		"https://github.com/moul2/depviz2#42",
 		"https://example.com/a/b#42",
@@ -20,15 +21,25 @@ func ExampleNewGitHubIssue() {
 	}
 	fmt.Println("relationships")
 	for _, name := range relatives {
+		attrs := ""
 		rel, err := entity.RelDecodeString(name)
 		if err != nil {
 			fmt.Printf("  %-42s -> error: %v\n", name, err)
 			continue
 		}
-		fmt.Printf("  %-42s -> %s\n", name, rel.Canonical())
+		if rel.Equals(entity) {
+			attrs += " (equals)"
+		}
+		if entity.Contains(rel) {
+			attrs += " (contains)"
+		}
+		if rel.Contains(entity) {
+			attrs += " (is contained)"
+		}
+		fmt.Printf("  %-42s -> %s%s\n", name, rel.String(), attrs)
 	}
-	fmt.Println("repo:", entity.RepoEntity().Canonical())
-	fmt.Println("owner:", entity.OwnerEntity().Canonical())
+	fmt.Println("repo:", entity.RepoEntity().String())
+	fmt.Println("owner:", entity.OwnerEntity().String())
 	fmt.Println("complex relationship:",
 		entity.OwnerEntity().
 			ServiceEntity().
@@ -40,16 +51,17 @@ func ExampleNewGitHubIssue() {
 			OwnerEntity("test3").
 			RepoEntity("test4").
 			MilestoneEntity("42").
-			Canonical())
+			String())
 	// Output:
 	// entity
 	//   https://github.com/moul/depviz/issues/42
 	//   issue
 	//   github
 	// relationships
-	//   @moul                                      -> https://github.com/moul
+	//   @moul                                      -> https://github.com/moul (is contained)
 	//   #4242                                      -> https://github.com/moul/depviz/issues/4242
 	//   moul2/depviz2#43                           -> https://github.com/moul2/depviz2/issues/43
+	//   moul/depviz#42                             -> https://github.com/moul/depviz/issues/42 (equals)
 	//   github.com/moul2/depviz2#42                -> https://github.com/moul2/depviz2/issues/42
 	//   https://github.com/moul2/depviz2#42        -> https://github.com/moul2/depviz2/issues/42
 	//   https://example.com/a/b#42                 -> error: ambiguous uri "https://example.com/a/b#42"
@@ -62,7 +74,7 @@ func ExampleNewGitHubIssue() {
 func ExampleNewGitHubService() {
 	entity := NewGitHubService("github.com")
 	fmt.Println("entity")
-	fmt.Println(" ", entity.Canonical())
+	fmt.Println(" ", entity.String())
 	fmt.Println(" ", entity.Kind())
 	fmt.Println(" ", entity.Provider())
 
@@ -90,7 +102,7 @@ func ExampleNewGitHubService() {
 			fmt.Printf("  %-42s -> error: %v\n", name, err)
 			continue
 		}
-		fmt.Printf("  %-42s -> %-43s %s\n", name, rel.Canonical(), rel.Kind())
+		fmt.Printf("  %-42s -> %-43s %s\n", name, rel.String(), rel.Kind())
 	}
 	// Output:
 	// entity
@@ -118,7 +130,7 @@ func ExampleNewGitHubService() {
 func ExampleNewGitHubService_Enterprise() {
 	entity := NewGitHubService("ge.company.com")
 	fmt.Println("entity")
-	fmt.Println(" ", entity.Canonical())
+	fmt.Println(" ", entity.String())
 	fmt.Println(" ", entity.Kind())
 	fmt.Println(" ", entity.Provider())
 
@@ -146,7 +158,7 @@ func ExampleNewGitHubService_Enterprise() {
 			fmt.Printf("  %-42s -> error: %v\n", name, err)
 			continue
 		}
-		fmt.Printf("  %-42s -> %-43s %s\n", name, rel.Canonical(), rel.Kind())
+		fmt.Printf("  %-42s -> %-43s %s\n", name, rel.String(), rel.Kind())
 	}
 	// Output:
 	// entity
