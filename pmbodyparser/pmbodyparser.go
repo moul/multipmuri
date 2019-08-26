@@ -57,14 +57,14 @@ func ParseString(body string) (Relationships, []error) {
 }
 
 var (
-	fixesRegex, _       = regexp.Compile(`(?im)^(fix|fixes)\s*[:= ]\s*([^\s,]+)$`)
-	blocksRegex, _      = regexp.Compile(`(?im)^(block|blocks)\s*[:= ]\s*([^\s,]+)$`)
-	closesRegex, _      = regexp.Compile(`(?im)^(close|closes)\s*[:= ]\s*([^\s,]+)$`)
-	parentOfRegex, _    = regexp.Compile(`(?im)^(parent of|parent)\s*[:= ]\s*([^\s,]+)$`)
-	partOfRegex, _      = regexp.Compile(`(?im)^(part of|part)\s*[:= ]\s*([^\s,]+)$`)
-	relatedWithRegex, _ = regexp.Compile(`(?im)^(related|related with)\s*[:= ]\s*([^\s,]+)$`)
-	addressesRegex, _   = regexp.Compile(`(?im)^(address|addresses)\s*[:= ]\s*([^\s,]+)$`)
-	dependsOnRegex, _   = regexp.Compile(`(?im)^(depend|depends|depend on|depends on)\s*[:= ]\s*([^\s,]+)$`)
+	fixesRegex, _       = regexp.Compile(`(?im)^\s*(fix|fixes)\s*[:= ]\s*([^\s,]+)\s*$`)
+	blocksRegex, _      = regexp.Compile(`(?im)^\s*(block|blocks)\s*[:= ]\s*([^\s,]+)\s*$`)
+	closesRegex, _      = regexp.Compile(`(?im)^\s*(close|closes)\s*[:= ]\s*([^\s,]+)\s*$`)
+	parentOfRegex, _    = regexp.Compile(`(?im)^\s*(parent of|parent)\s*[:= ]\s*([^\s,]+)\s*$`)
+	partOfRegex, _      = regexp.Compile(`(?im)^\s*(part of|part)\s*[:= ]\s*([^\s,]+)\s*$`)
+	relatedWithRegex, _ = regexp.Compile(`(?im)^\s*(related|related with)\s*[:= ]\s*([^\s,]+)\s*$`)
+	addressesRegex, _   = regexp.Compile(`(?im)^\s*(address|addresses)\s*[:= ]\s*([^\s,]+)\s*$`)
+	dependsOnRegex, _   = regexp.Compile(`(?im)^\s*(depend|depends|depend on|depends on)\s*[:= ]\s*([^\s,]+)\s*$`)
 )
 
 func RelParseString(context multipmuri.Entity, body string) (Relationships, []error) {
