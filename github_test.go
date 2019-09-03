@@ -41,16 +41,16 @@ func ExampleNewGitHubIssue() {
 	fmt.Println("repo:", entity.RepoEntity().String())
 	fmt.Println("owner:", entity.OwnerEntity().String())
 	fmt.Println("complex relationship:",
-		entity.OwnerEntity().
-			ServiceEntity().
-			OwnerEntity("test1").
-			RepoEntity("test2").
-			IssueEntity("42").
-			RepoEntity().
-			ServiceEntity().
-			OwnerEntity("test3").
-			RepoEntity("test4").
-			MilestoneEntity("42").
+		entity.Owner().
+			Service().
+			Owner("test1").
+			Repo("test2").
+			Issue("42").
+			Repo().
+			Service().
+			Owner("test3").
+			Repo("test4").
+			Milestone("42").
 			String())
 	// Output:
 	// entity

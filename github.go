@@ -56,19 +56,19 @@ type GitHubIssue struct {
 	*withGitHubID
 }
 
-func NewGitHubIssue(hostname, owner, repo, id string) *GitHubIssue {
+func NewGitHubIssue(hostname, ownerID, repoID, id string) *GitHubIssue {
 	return &GitHubIssue{
 		Issue:        &issue{},
-		withGitHubID: &withGitHubID{hostname, owner, repo, id},
+		withGitHubID: &withGitHubID{hostname, ownerID, repoID, id},
 	}
 }
 
 func (e GitHubIssue) String() string {
-	return fmt.Sprintf("https://%s/%s/%s/issues/%s", e.Hostname(), e.Owner(), e.Repo(), e.ID())
+	return fmt.Sprintf("https://%s/%s/%s/issues/%s", e.Hostname(), e.OwnerID(), e.RepoID(), e.ID())
 }
 
 func (e GitHubIssue) RelDecodeString(input string) (Entity, error) {
-	return gitHubRelDecodeString(e.Hostname(), e.Owner(), e.Repo(), input, false)
+	return gitHubRelDecodeString(e.Hostname(), e.OwnerID(), e.RepoID(), input, false)
 }
 
 func (e GitHubIssue) Equals(other Entity) bool {
@@ -76,8 +76,8 @@ func (e GitHubIssue) Equals(other Entity) bool {
 	case *GitHubIssueOrPullRequest, *GitHubIssue, *GitHubPullRequest:
 		if typed, valid := other.(hasWithGitHubID); valid {
 			return e.Hostname() == typed.Hostname() &&
-				e.Owner() == typed.Owner() &&
-				e.Repo() == typed.Repo() &&
+				e.OwnerID() == typed.OwnerID() &&
+				e.RepoID() == typed.RepoID() &&
 				e.ID() == typed.ID()
 		}
 	}
@@ -97,26 +97,26 @@ type GitHubMilestone struct {
 	*withGitHubID
 }
 
-func NewGitHubMilestone(hostname, owner, repo, id string) *GitHubMilestone {
+func NewGitHubMilestone(hostname, ownerID, repoID, id string) *GitHubMilestone {
 	return &GitHubMilestone{
 		Milestone:    &milestone{},
-		withGitHubID: &withGitHubID{hostname, owner, repo, id},
+		withGitHubID: &withGitHubID{hostname, ownerID, repoID, id},
 	}
 }
 
 func (e GitHubMilestone) String() string {
-	return fmt.Sprintf("https://%s/%s/%s/milestone/%s", e.Hostname(), e.Owner(), e.Repo(), e.ID())
+	return fmt.Sprintf("https://%s/%s/%s/milestone/%s", e.Hostname(), e.OwnerID(), e.RepoID(), e.ID())
 }
 
 func (e GitHubMilestone) RelDecodeString(input string) (Entity, error) {
-	return gitHubRelDecodeString(e.Hostname(), e.Owner(), e.Repo(), input, false)
+	return gitHubRelDecodeString(e.Hostname(), e.OwnerID(), e.RepoID(), input, false)
 }
 
 func (e GitHubMilestone) Equals(other Entity) bool {
 	if typed, valid := other.(*GitHubMilestone); valid {
 		return e.Hostname() == typed.Hostname() &&
-			e.Owner() == typed.Owner() &&
-			e.Repo() == typed.Repo() &&
+			e.OwnerID() == typed.OwnerID() &&
+			e.RepoID() == typed.RepoID() &&
 			e.ID() == typed.ID()
 	}
 	return false
@@ -135,19 +135,19 @@ type GitHubPullRequest struct {
 	*withGitHubID
 }
 
-func NewGitHubPullRequest(hostname, owner, repo, id string) *GitHubPullRequest {
+func NewGitHubPullRequest(hostname, ownerID, repoID, id string) *GitHubPullRequest {
 	return &GitHubPullRequest{
 		MergeRequest: &mergeRequest{},
-		withGitHubID: &withGitHubID{hostname, owner, repo, id},
+		withGitHubID: &withGitHubID{hostname, ownerID, repoID, id},
 	}
 }
 
 func (e GitHubPullRequest) String() string {
-	return fmt.Sprintf("https://%s/%s/%s/pull/%s", e.Hostname(), e.Owner(), e.Repo(), e.ID())
+	return fmt.Sprintf("https://%s/%s/%s/pull/%s", e.Hostname(), e.OwnerID(), e.RepoID(), e.ID())
 }
 
 func (e GitHubPullRequest) RelDecodeString(input string) (Entity, error) {
-	return gitHubRelDecodeString(e.Hostname(), e.Owner(), e.Repo(), input, false)
+	return gitHubRelDecodeString(e.Hostname(), e.OwnerID(), e.RepoID(), input, false)
 }
 
 func (e GitHubPullRequest) Equals(other Entity) bool {
@@ -155,8 +155,8 @@ func (e GitHubPullRequest) Equals(other Entity) bool {
 	case *GitHubIssueOrPullRequest, *GitHubIssue, *GitHubPullRequest:
 		if typed, valid := other.(hasWithGitHubID); valid {
 			return e.Hostname() == typed.Hostname() &&
-				e.Owner() == typed.Owner() &&
-				e.Repo() == typed.Repo() &&
+				e.OwnerID() == typed.OwnerID() &&
+				e.RepoID() == typed.RepoID() &&
 				e.ID() == typed.ID()
 		}
 	}
@@ -176,19 +176,19 @@ type GitHubIssueOrPullRequest struct {
 	*withGitHubID
 }
 
-func NewGitHubIssueOrPullRequest(hostname, owner, repo, id string) *GitHubIssueOrPullRequest {
+func NewGitHubIssueOrPullRequest(hostname, ownerID, repoID, id string) *GitHubIssueOrPullRequest {
 	return &GitHubIssueOrPullRequest{
 		IssueOrMergeRequest: &issueOrMergeRequest{},
-		withGitHubID:        &withGitHubID{hostname, owner, repo, id},
+		withGitHubID:        &withGitHubID{hostname, ownerID, repoID, id},
 	}
 }
 
 func (e GitHubIssueOrPullRequest) String() string {
-	return fmt.Sprintf("https://%s/%s/%s/issues/%s", e.Hostname(), e.Owner(), e.Repo(), e.ID())
+	return fmt.Sprintf("https://%s/%s/%s/issues/%s", e.Hostname(), e.OwnerID(), e.RepoID(), e.ID())
 }
 
 func (e GitHubIssueOrPullRequest) RelDecodeString(input string) (Entity, error) {
-	return gitHubRelDecodeString(e.Hostname(), e.Owner(), e.Repo(), input, false)
+	return gitHubRelDecodeString(e.Hostname(), e.OwnerID(), e.RepoID(), input, false)
 }
 
 func (e GitHubIssueOrPullRequest) Equals(other Entity) bool {
@@ -196,8 +196,8 @@ func (e GitHubIssueOrPullRequest) Equals(other Entity) bool {
 	case *GitHubIssueOrPullRequest, *GitHubIssue, *GitHubPullRequest:
 		if typed, valid := other.(hasWithGitHubID); valid {
 			return e.Hostname() == typed.Hostname() &&
-				e.Owner() == typed.Owner() &&
-				e.Repo() == typed.Repo() &&
+				e.OwnerID() == typed.OwnerID() &&
+				e.RepoID() == typed.RepoID() &&
 				e.ID() == typed.ID()
 		}
 	}
@@ -217,25 +217,25 @@ type GitHubOwner struct {
 	*withGitHubOwner
 }
 
-func NewGitHubOwner(hostname, owner string) *GitHubOwner {
+func NewGitHubOwner(hostname, ownerID string) *GitHubOwner {
 	return &GitHubOwner{
 		UserOrOrganization: &userOrOrganization{},
-		withGitHubOwner:    &withGitHubOwner{hostname, owner},
+		withGitHubOwner:    &withGitHubOwner{hostname, ownerID},
 	}
 }
 
 func (e GitHubOwner) String() string {
-	return fmt.Sprintf("https://%s/%s", e.Hostname(), e.Owner())
+	return fmt.Sprintf("https://%s/%s", e.Hostname(), e.OwnerID())
 }
 
 func (e GitHubOwner) RelDecodeString(input string) (Entity, error) {
-	return gitHubRelDecodeString(e.Hostname(), e.Owner(), "", input, false)
+	return gitHubRelDecodeString(e.Hostname(), e.OwnerID(), "", input, false)
 }
 
 func (e GitHubOwner) Equals(other Entity) bool {
 	if typed, valid := other.(*GitHubOwner); valid {
 		return e.Hostname() == typed.Hostname() &&
-			e.Owner() == typed.Owner()
+			e.OwnerID() == typed.OwnerID()
 	}
 	return false
 }
@@ -245,7 +245,7 @@ func (e GitHubOwner) Contains(other Entity) bool {
 	case *GitHubRepo, *GitHubMilestone, *GitHubIssueOrPullRequest, *GitHubIssue, *GitHubPullRequest:
 		if typed, valid := other.(hasWithGitHubOwner); valid {
 			return e.Hostname() == typed.Hostname() &&
-				e.Owner() == typed.Owner()
+				e.OwnerID() == typed.OwnerID()
 		}
 	}
 	return false
@@ -260,26 +260,26 @@ type GitHubRepo struct {
 	*withGitHubRepo
 }
 
-func NewGitHubRepo(hostname, owner, repo string) *GitHubRepo {
+func NewGitHubRepo(hostname, ownerID, repoID string) *GitHubRepo {
 	return &GitHubRepo{
 		Project:        &project{},
-		withGitHubRepo: &withGitHubRepo{hostname, owner, repo},
+		withGitHubRepo: &withGitHubRepo{hostname, ownerID, repoID},
 	}
 }
 
 func (e GitHubRepo) String() string {
-	return fmt.Sprintf("https://%s/%s/%s", e.Hostname(), e.Owner(), e.Repo())
+	return fmt.Sprintf("https://%s/%s/%s", e.Hostname(), e.OwnerID(), e.RepoID())
 }
 
 func (e GitHubRepo) RelDecodeString(input string) (Entity, error) {
-	return gitHubRelDecodeString(e.Hostname(), e.Owner(), e.Repo(), input, false)
+	return gitHubRelDecodeString(e.Hostname(), e.OwnerID(), e.RepoID(), input, false)
 }
 
 func (e GitHubRepo) Equals(other Entity) bool {
 	if typed, valid := other.(*GitHubMilestone); valid {
 		return e.Hostname() == typed.Hostname() &&
-			e.Owner() == typed.Owner() &&
-			e.Repo() == typed.Repo()
+			e.OwnerID() == typed.OwnerID() &&
+			e.RepoID() == typed.RepoID()
 	}
 	return false
 }
@@ -289,8 +289,8 @@ func (e GitHubRepo) Contains(other Entity) bool {
 	case *GitHubMilestone, *GitHubIssueOrPullRequest, *GitHubIssue, *GitHubPullRequest:
 		if typed, valid := other.(hasWithGitHubRepo); valid {
 			return e.Hostname() == typed.Hostname() &&
-				e.Owner() == typed.Owner() &&
-				e.Repo() == typed.Repo()
+				e.OwnerID() == typed.OwnerID() &&
+				e.RepoID() == typed.RepoID()
 		}
 	}
 	return false
@@ -300,74 +300,95 @@ func (e GitHubRepo) Contains(other Entity) bool {
 // GitHubCommon
 //
 
+// githubHostname
+
 type hasWithGitHubHostname interface {
 	Hostname() string
 }
 
 type withGitHubHostname struct{ hostname string }
 
-func (e *withGitHubHostname) Provider() Provider { return GitHubProvider }
-func (e *withGitHubHostname) Hostname() string   { return githubHostname(e.hostname) }
-func (e *withGitHubHostname) OwnerEntity(owner string) *GitHubOwner {
-	return NewGitHubOwner(e.hostname, owner)
+func (e *withGitHubHostname) Provider() Provider      { return GitHubProvider }
+func (e *withGitHubHostname) Hostname() string        { return githubHostname(e.hostname) }
+func (e *withGitHubHostname) Service() *GitHubService { return NewGitHubService(e.hostname) }
+func (e *withGitHubHostname) ServiceEntity() Entity   { return e.Service() }
+func (e *withGitHubHostname) Owner(ownerID string) *GitHubOwner {
+	return NewGitHubOwner(e.hostname, ownerID)
 }
+func (e *withGitHubHostname) OwnerEntity(ownerID string) Entity { return e.Owner(ownerID) }
+
+//githubOwner
 
 type hasWithGitHubOwner interface {
 	Hostname() string
-	Owner() string
+	OwnerID() string
 }
 
-type withGitHubOwner struct{ hostname, owner string }
+type withGitHubOwner struct{ hostname, ownerID string }
 
-func (e *withGitHubOwner) Provider() Provider            { return GitHubProvider }
-func (e *withGitHubOwner) Hostname() string              { return githubHostname(e.hostname) }
-func (e *withGitHubOwner) Owner() string                 { return e.owner }
-func (e *withGitHubOwner) ServiceEntity() *GitHubService { return NewGitHubService(e.hostname) }
-func (e *withGitHubOwner) RepoEntity(repo string) *GitHubRepo {
-	return NewGitHubRepo(e.hostname, e.owner, repo)
+func (e *withGitHubOwner) Provider() Provider      { return GitHubProvider }
+func (e *withGitHubOwner) Hostname() string        { return githubHostname(e.hostname) }
+func (e *withGitHubOwner) Service() *GitHubService { return NewGitHubService(e.hostname) }
+func (e *withGitHubOwner) ServiceEntity() Entity   { return e.Service() }
+func (e *withGitHubOwner) OwnerID() string         { return e.ownerID }
+func (e *withGitHubOwner) Owner() *GitHubOwner     { return NewGitHubOwner(e.hostname, e.ownerID) }
+func (e *withGitHubOwner) OwnerEntity() Entity     { return e.Owner() }
+func (e *withGitHubOwner) Repo(repoID string) *GitHubRepo {
+	return NewGitHubRepo(e.hostname, e.ownerID, repoID)
 }
+func (e *withGitHubOwner) RepoEntity(repoID string) Entity { return e.Repo(repoID) }
+
+// githubRepo
 
 type hasWithGitHubRepo interface {
 	Hostname() string
-	Owner() string
-	Repo() string
+	OwnerID() string
+	RepoID() string
 }
 
-type withGitHubRepo struct{ hostname, owner, repo string }
+type withGitHubRepo struct{ hostname, ownerID, repoID string }
 
-func (e *withGitHubRepo) Provider() Provider            { return GitHubProvider }
-func (e *withGitHubRepo) Hostname() string              { return githubHostname(e.hostname) }
-func (e *withGitHubRepo) Owner() string                 { return e.owner }
-func (e *withGitHubRepo) Repo() string                  { return e.repo }
-func (e *withGitHubRepo) ServiceEntity() *GitHubService { return NewGitHubService(e.hostname) }
-func (e *withGitHubRepo) OwnerEntity() *GitHubOwner     { return NewGitHubOwner(e.hostname, e.owner) }
-func (e *withGitHubRepo) RepoEntity() *GitHubRepo {
-	return NewGitHubRepo(e.hostname, e.owner, e.repo)
+func (e *withGitHubRepo) Provider() Provider      { return GitHubProvider }
+func (e *withGitHubRepo) Hostname() string        { return githubHostname(e.hostname) }
+func (e *withGitHubRepo) OwnerID() string         { return e.ownerID }
+func (e *withGitHubRepo) RepoID() string          { return e.repoID }
+func (e *withGitHubRepo) Service() *GitHubService { return NewGitHubService(e.hostname) }
+func (e *withGitHubRepo) ServiceEntity() Entity   { return e.Service() }
+func (e *withGitHubRepo) Owner() *GitHubOwner     { return NewGitHubOwner(e.hostname, e.ownerID) }
+func (e *withGitHubRepo) OwnerEntity() Entity     { return e.Owner() }
+func (e *withGitHubRepo) Repo() *GitHubRepo       { return NewGitHubRepo(e.hostname, e.ownerID, e.repoID) }
+func (e *withGitHubRepo) RepoEntity() Entity      { return e.Repo() }
+func (e *withGitHubRepo) Issue(id string) *GitHubIssue {
+	return NewGitHubIssue(e.hostname, e.ownerID, e.repoID, id)
 }
-func (e *withGitHubRepo) IssueEntity(id string) *GitHubIssue {
-	return NewGitHubIssue(e.hostname, e.owner, e.repo, id)
+func (e *withGitHubRepo) IssueEntity(id string) Entity { return e.Issue(id) }
+func (e *withGitHubRepo) Milestone(id string) *GitHubMilestone {
+	return NewGitHubMilestone(e.hostname, e.ownerID, e.repoID, id)
 }
-func (e *withGitHubRepo) MilestoneEntity(id string) *GitHubMilestone {
-	return NewGitHubMilestone(e.hostname, e.owner, e.repo, id)
-}
+func (e *withGitHubRepo) MilestoneEntity(id string) Entity { return e.Milestone(id) }
+
+// githubID (issue, milestone, PR, ...))
 
 type hasWithGitHubID interface {
 	Hostname() string
-	Owner() string
-	Repo() string
+	OwnerID() string
+	RepoID() string
 	ID() string
 }
 
-type withGitHubID struct{ hostname, owner, repo, id string }
+type withGitHubID struct{ hostname, ownerID, repoID, id string }
 
-func (e *withGitHubID) Provider() Provider            { return GitHubProvider }
-func (e *withGitHubID) Hostname() string              { return githubHostname(e.hostname) }
-func (e *withGitHubID) Owner() string                 { return e.owner }
-func (e *withGitHubID) Repo() string                  { return e.repo }
-func (e *withGitHubID) ID() string                    { return e.id }
-func (e *withGitHubID) ServiceEntity() *GitHubService { return NewGitHubService(e.hostname) }
-func (e *withGitHubID) OwnerEntity() *GitHubOwner     { return NewGitHubOwner(e.hostname, e.owner) }
-func (e *withGitHubID) RepoEntity() *GitHubRepo       { return NewGitHubRepo(e.hostname, e.owner, e.repo) }
+func (e *withGitHubID) Provider() Provider      { return GitHubProvider }
+func (e *withGitHubID) Hostname() string        { return githubHostname(e.hostname) }
+func (e *withGitHubID) OwnerID() string         { return e.ownerID }
+func (e *withGitHubID) RepoID() string          { return e.repoID }
+func (e *withGitHubID) ID() string              { return e.id }
+func (e *withGitHubID) Service() *GitHubService { return NewGitHubService(e.hostname) }
+func (e *withGitHubID) ServiceEntity() Entity   { return e.Service() }
+func (e *withGitHubID) Owner() *GitHubOwner     { return NewGitHubOwner(e.hostname, e.ownerID) }
+func (e *withGitHubID) OwnerEntity() Entity     { return e.Owner() }
+func (e *withGitHubID) Repo() *GitHubRepo       { return NewGitHubRepo(e.hostname, e.ownerID, e.repoID) }
+func (e *withGitHubID) RepoEntity() Entity      { return e.Repo() }
 
 //
 // Helpers
