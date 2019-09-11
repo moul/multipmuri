@@ -197,6 +197,4 @@ func trelloRelDecodeString(input string, force bool) (Entity, error) {
 		}
 		return NewTrelloUser(parts[0]), nil
 	}
-
-	return nil, fmt.Errorf("failed to parse %q", input)
 }
