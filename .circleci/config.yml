@@ -1,7 +1,7 @@
 version: 2.1
 
 orbs:
-  moul: moul/build@1.10.0 # https://github.com/moul/build
+  moul: moul/build@1.12.1 # https://github.com/moul/build
 
 workflows:
   main:
@@ -9,6 +9,10 @@ workflows:
       - moul/golang-build:
           gopkg: moul.io/multipmuri
           no-install: true
+      - moul/golang-build:
+          gopkg: moul.io/multipmuri
+          no-install: true
+          tag: '1.12'
       - moul/golang-build:
           gopkg: moul.io/multipmuri
           no-install: true
