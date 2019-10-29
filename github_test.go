@@ -119,7 +119,7 @@ func ExampleNewGitHubService() {
 	//   moul/depviz/milestone/1                    -> https://github.com/moul/depviz/milestone/1  milestone
 	//   moul/depviz#1                              -> https://github.com/moul/depviz/issues/1     issue-or-merge-request
 	//   github.com/moul/depviz/issues/2            -> https://github.com/moul/depviz/issues/2     issue
-	//   github.com/moul/depviz/pull/1              -> https://github.com/moul/depviz/pull/1       merge-request
+	//   github.com/moul/depviz/pull/1              -> https://github.com/moul/depviz/issues/1     merge-request
 	//   https://github.com/moul/depviz/issues/1    -> https://github.com/moul/depviz/issues/1     issue
 	//   https://github.com/moul/depviz#1           -> https://github.com/moul/depviz/issues/1     issue-or-merge-request
 	//   github://moul/depviz#1                     -> https://github.com/moul/depviz/issues/1     issue-or-merge-request
@@ -175,7 +175,7 @@ func ExampleNewGitHubService_Enterprise() {
 	//   moul/depviz/milestone/1                    -> https://ge.company.com/moul/depviz/milestone/1 milestone
 	//   moul/depviz#1                              -> https://ge.company.com/moul/depviz/issues/1 issue-or-merge-request
 	//   github.com/moul/depviz/issues/2            -> https://github.com/moul/depviz/issues/2     issue
-	//   github.com/moul/depviz/pull/1              -> https://github.com/moul/depviz/pull/1       merge-request
+	//   github.com/moul/depviz/pull/1              -> https://github.com/moul/depviz/issues/1     merge-request
 	//   https://github.com/moul/depviz/issues/1    -> https://github.com/moul/depviz/issues/1     issue
 	//   https://github.com/moul/depviz#1           -> https://github.com/moul/depviz/issues/1     issue-or-merge-request
 	//   github://moul/depviz#1                     -> https://github.com/moul/depviz/issues/1     issue-or-merge-request

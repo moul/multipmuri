@@ -39,7 +39,7 @@ func ExampleDecodeString() {
 	// moul/depviz/milestone/1                    error: ambiguous uri "moul/depviz/milestone/1"
 	// moul/depviz#1                              error: ambiguous uri "moul/depviz#1"
 	// github.com/moul/depviz/issues/2            https://github.com/moul/depviz/issues/2          github   issue
-	// github.com/moul/depviz/pull/1              https://github.com/moul/depviz/pull/1            github   merge-request
+	// github.com/moul/depviz/pull/1              https://github.com/moul/depviz/issues/1          github   merge-request
 	// https://github.com/moul/depviz/issues/1    https://github.com/moul/depviz/issues/1          github   issue
 	// https://github.com/moul/depviz#1           https://github.com/moul/depviz/issues/1          github   issue-or-merge-request
 	// github://moul/depviz#1                     https://github.com/moul/depviz/issues/1          github   issue-or-merge-request
