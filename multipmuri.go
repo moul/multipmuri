@@ -5,12 +5,12 @@ package multipmuri
 //
 
 type Entity interface {
-	WithKind
-	WithProvider
-	RelDecodeString(string) (Entity, error)
-	Equals(Entity) bool
-	Contains(Entity) bool
-	String() string
+	WithKind                                // an entity always have a kind (issue, MR, provider, service, milestone, ...)
+	WithProvider                            // an entity always have a provider (GitHub, GitLab, Trello, Jira, ...)
+	RelDecodeString(string) (Entity, error) // try to parse an URI based on relative context
+	Equals(Entity) bool                     // is the same of
+	Contains(Entity) bool                   // is parent of or is the same of
+	String() string                         // canonical URL
 }
 
 type WithKind interface {

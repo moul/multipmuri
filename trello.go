@@ -2,7 +2,6 @@ package multipmuri
 
 import (
 	"fmt"
-	"log"
 	"net/url"
 	"strings"
 )
@@ -185,7 +184,7 @@ func trelloRelDecodeString(input string, force bool) (Entity, error) {
 	parts := strings.Split(u.Path, "/")
 	lenParts := len(parts)
 	// FIXME: handle fragment (actions, comments, etc)
-	log.Println("path", u.Path, "fragment", u.Fragment, "len", lenParts)
+	//log.Println("path", u.Path, "fragment", u.Fragment, "len", lenParts)
 	switch {
 	case lenParts > 1 && parts[0] == "c":
 		return NewTrelloCard(parts[1]), nil

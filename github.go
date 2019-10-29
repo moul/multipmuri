@@ -143,7 +143,8 @@ func NewGitHubPullRequest(hostname, ownerID, repoID, id string) *GitHubPullReque
 }
 
 func (e GitHubPullRequest) String() string {
-	return fmt.Sprintf("https://%s/%s/%s/pull/%s", e.Hostname(), e.OwnerID(), e.RepoID(), e.ID())
+	// canonical URL for PR is voluntarily issues/%s instead of pull/%s
+	return fmt.Sprintf("https://%s/%s/%s/issues/%s", e.Hostname(), e.OwnerID(), e.RepoID(), e.ID())
 }
 
 func (e GitHubPullRequest) RelDecodeString(input string) (Entity, error) {
