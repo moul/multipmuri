@@ -487,6 +487,11 @@ func gitHubRelDecodeString(hostname, owner, repo, input string, force bool) (Ent
 		if parts[0] == "" {
 			parts = parts[1:]
 		}
+
+		if len(parts) >= 5 && parts[0] == githubAPIReposPart && parts[3] == githubAPILabelsPart {
+			return NewGitHubLabel(hostname, parts[1], parts[2], strings.Join(parts[4:], "/")), nil
+		}
+
 		switch len(parts) {
 		case 2:
 			if parts[0] == githubAPIUsersPart {
@@ -505,9 +510,6 @@ func gitHubRelDecodeString(hostname, owner, repo, input string, force bool) (Ent
 			}
 			if parts[0] == githubAPIReposPart && parts[3] == githubAPIMilestonesPart {
 				return NewGitHubMilestone(hostname, parts[1], parts[2], parts[4]), nil
-			}
-			if parts[0] == githubAPIReposPart && parts[3] == githubAPILabelsPart {
-				return NewGitHubLabel(hostname, parts[1], parts[2], parts[4]), nil
 			}
 		}
 		return nil, fmt.Errorf("failed to parse %q", input)
@@ -537,6 +539,11 @@ func gitHubRelDecodeString(hostname, owner, repo, input string, force bool) (Ent
 		u.Path += "/issue-or-pull-request/" + u.Fragment
 	}
 	parts := strings.Split(u.Path, "/")
+
+	if len(parts) >= 4 && parts[2] == "labels" {
+		return NewGitHubLabel(hostname, parts[0], parts[1], strings.Join(parts[3:], "/")), nil
+	}
+
 	switch len(parts) {
 	case 1:
 		if u.Host != "" && parts[0][0] != '@' {
@@ -552,8 +559,6 @@ func gitHubRelDecodeString(hostname, owner, repo, input string, force bool) (Ent
 		switch parts[2] {
 		case "issues":
 			return NewGitHubIssue(hostname, parts[0], parts[1], parts[3]), nil
-		case "labels":
-			return NewGitHubLabel(hostname, parts[0], parts[1], parts[3]), nil
 		case "milestone":
 			return NewGitHubMilestone(hostname, parts[0], parts[1], parts[3]), nil
 		case "pull":
