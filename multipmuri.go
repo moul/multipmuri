@@ -56,6 +56,7 @@ const (
 	IssueOrMergeRequestKind   Kind = "issue-or-merge-request"
 	UserKind                  Kind = "user"
 	ProjectKind               Kind = "project"
+	LabelKind                 Kind = "label"
 )
 
 //
@@ -127,6 +128,20 @@ type project struct{}
 
 func (project) IsProject() {}
 func (project) Kind() Kind { return ProjectKind }
+
+//
+// Label
+//
+
+type Label interface {
+	WithKind
+	IsLabel()
+}
+
+type label struct{}
+
+func (label) IsLabel()   {}
+func (label) Kind() Kind { return LabelKind }
 
 //
 // MergeRequest

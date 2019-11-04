@@ -129,6 +129,34 @@ func ExampleNewGitHubService() {
 	//   github://https://github.com/moul/depviz#1  -> https://github.com/moul/depviz/issues/1     issue-or-merge-request
 }
 
+func ExampleNewGitHubService_API() {
+	entity := NewGitHubService("github.com")
+	relatives := []string{
+		"https://api.github.com/repos/moul/depviz/labels/bug",
+		"https://api.github.com/repos/moul/depviz",
+		"https://api.github.com/repos/moul/depviz/issues/1",
+		"https://api.github.com/repos/moul/depviz/pulls/170",
+		"https://api.github.com/users/moul",
+		"https://api.github.com/repos/moul/depviz/milestones/1",
+	}
+	for _, relative := range relatives {
+		rel, err := entity.RelDecodeString(relative)
+		if err != nil {
+			fmt.Printf("%-42s -> error %v\n", relative, err)
+			continue
+		}
+		fmt.Printf("%-53s -> %-50s %-30s %s\n", relative, rel.String(), rel.Kind(), rel.LocalID())
+	}
+
+	// Output:
+	// https://api.github.com/repos/moul/depviz/labels/bug   -> https://github.com/moul/depviz/labels/bug          label                          moul/depviz/labels/bug
+	// https://api.github.com/repos/moul/depviz              -> https://github.com/moul/depviz                     project                        moul/depviz
+	// https://api.github.com/repos/moul/depviz/issues/1     -> https://github.com/moul/depviz/issues/1            issue-or-merge-request         moul/depviz#1
+	// https://api.github.com/repos/moul/depviz/pulls/170    -> https://github.com/moul/depviz/issues/170          issue-or-merge-request         moul/depviz#170
+	// https://api.github.com/users/moul                     -> https://github.com/moul                            user-or-organization           @moul
+	// https://api.github.com/repos/moul/depviz/milestones/1 -> https://github.com/moul/depviz/milestone/1         milestone                      moul/depviz/milestone/1
+}
+
 func ExampleNewGitHubService_Enterprise() {
 	entity := NewGitHubService("ge.company.com")
 	fmt.Println("entity")

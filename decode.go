@@ -45,12 +45,13 @@ func (unknownEntity) RelDecodeString(input string) (Entity, error) {
 	switch u.Scheme {
 	case "", "https", "http":
 		switch u.Host {
-		case "github.com":
+		case "github.com", "api.github.com":
 			return gitHubRelDecodeString("", "", "", input, true)
 		case "gitlab.com":
 			return gitLabRelDecodeString("", "", "", input, true)
+		case "trello.com":
+			return trelloRelDecodeString(input, true)
 			// case "jira.com", "atlassian.com":
-			// case "trello.com":
 		}
 	}
 

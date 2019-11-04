@@ -305,7 +305,7 @@ func (e GitHubRepo) RelDecodeString(input string) (Entity, error) {
 }
 
 func (e GitHubRepo) Equals(other Entity) bool {
-	if typed, valid := other.(*GitHubMilestone); valid {
+	if typed, valid := other.(*GitHubRepo); valid {
 		return e.Hostname() == typed.Hostname() &&
 			e.OwnerID() == typed.OwnerID() &&
 			e.RepoID() == typed.RepoID()
@@ -322,6 +322,48 @@ func (e GitHubRepo) Contains(other Entity) bool {
 				e.RepoID() == typed.RepoID()
 		}
 	}
+	return false
+}
+
+//
+// GitHubLabel
+//
+
+type GitHubLabel struct {
+	Label
+	*withGitHubID
+}
+
+func NewGitHubLabel(hostname, ownerID, repoID, id string) *GitHubLabel {
+	return &GitHubLabel{
+		Label:        &label{},
+		withGitHubID: &withGitHubID{hostname, ownerID, repoID, id},
+	}
+}
+
+func (e GitHubLabel) String() string {
+	return fmt.Sprintf("https://%s/%s/%s/labels/%s", e.Hostname(), e.OwnerID(), e.RepoID(), e.ID())
+}
+
+func (e GitHubLabel) LocalID() string {
+	return fmt.Sprintf("%s/%s/labels/%s", e.OwnerID(), e.RepoID(), e.ID())
+}
+
+func (e GitHubLabel) RelDecodeString(input string) (Entity, error) {
+	return gitHubRelDecodeString(e.Hostname(), e.OwnerID(), e.RepoID(), input, false)
+}
+
+func (e GitHubLabel) Equals(other Entity) bool {
+	if typed, valid := other.(*GitHubLabel); valid {
+		return e.Hostname() == typed.Hostname() &&
+			e.OwnerID() == typed.OwnerID() &&
+			e.RepoID() == typed.RepoID() &&
+			e.ID() == typed.ID()
+	}
+	return false
+}
+
+func (e GitHubLabel) Contains(other Entity) bool {
 	return false
 }
 
@@ -423,6 +465,15 @@ func (e *withGitHubID) RepoEntity() Entity      { return e.Repo() }
 // Helpers
 //
 
+const (
+	githubAPIReposPart      = "repos"
+	githubAPIUsersPart      = "users"
+	githubAPIIssuesPart     = "issues"
+	githubAPIPullsPart      = "pulls"
+	githubAPIMilestonesPart = "milestones"
+	githubAPILabelsPart     = "labels"
+)
+
 func gitHubRelDecodeString(hostname, owner, repo, input string, force bool) (Entity, error) {
 	if hostname == "" {
 		hostname = "github.com"
@@ -430,6 +481,37 @@ func gitHubRelDecodeString(hostname, owner, repo, input string, force bool) (Ent
 	u, err := url.Parse(input)
 	if err != nil {
 		return nil, err
+	}
+	if u.Host == "api.github.com" {
+		parts := strings.Split(u.Path, "/")
+		if parts[0] == "" {
+			parts = parts[1:]
+		}
+		switch len(parts) {
+		case 2:
+			if parts[0] == githubAPIUsersPart {
+				return NewGitHubOwner(hostname, parts[1]), nil
+			}
+		case 3:
+			if parts[0] == githubAPIReposPart {
+				return NewGitHubRepo(hostname, parts[1], parts[2]), nil
+			}
+		case 5:
+			if parts[0] == githubAPIReposPart && parts[3] == githubAPIIssuesPart {
+				return NewGitHubIssueOrPullRequest(hostname, parts[1], parts[2], parts[4]), nil
+			}
+			if parts[0] == githubAPIReposPart && parts[3] == githubAPIPullsPart {
+				return NewGitHubIssueOrPullRequest(hostname, parts[1], parts[2], parts[4]), nil
+			}
+			if parts[0] == githubAPIReposPart && parts[3] == githubAPIMilestonesPart {
+				return NewGitHubMilestone(hostname, parts[1], parts[2], parts[4]), nil
+			}
+			if parts[0] == githubAPIReposPart && parts[3] == githubAPILabelsPart {
+				return NewGitHubLabel(hostname, parts[1], parts[2], parts[4]), nil
+			}
+		}
+		return nil, fmt.Errorf("failed to parse %q", input)
+
 	}
 	if isProviderScheme(u.Scheme) { // github://, gitlab://, ...
 		return DecodeString(input)
@@ -470,6 +552,8 @@ func gitHubRelDecodeString(hostname, owner, repo, input string, force bool) (Ent
 		switch parts[2] {
 		case "issues":
 			return NewGitHubIssue(hostname, parts[0], parts[1], parts[3]), nil
+		case "labels":
+			return NewGitHubLabel(hostname, parts[0], parts[1], parts[3]), nil
 		case "milestone":
 			return NewGitHubMilestone(hostname, parts[0], parts[1], parts[3]), nil
 		case "pull":
