@@ -87,6 +87,8 @@ func ExampleNewGitHubService() {
 		"@moul",
 		"github.com/moul/depviz",
 		"moul/depviz",
+		"moul/depviz/labels/bug",
+		"moul/depviz/labels/a/b/c",
 		"moul/depviz/milestone/1",
 		"moul/depviz#1",
 		"github.com/moul/depviz/issues/2",
@@ -118,6 +120,8 @@ func ExampleNewGitHubService() {
 	//   @moul                                      -> https://github.com/moul                     user-or-organization
 	//   github.com/moul/depviz                     -> https://github.com/moul/depviz              project
 	//   moul/depviz                                -> https://github.com/moul/depviz              project
+	//   moul/depviz/labels/bug                     -> https://github.com/moul/depviz/labels/bug   label
+	//   moul/depviz/labels/a/b/c                   -> https://github.com/moul/depviz/labels/a/b/c label
 	//   moul/depviz/milestone/1                    -> https://github.com/moul/depviz/milestone/1  milestone
 	//   moul/depviz#1                              -> https://github.com/moul/depviz/issues/1     issue-or-merge-request
 	//   github.com/moul/depviz/issues/2            -> https://github.com/moul/depviz/issues/2     issue
@@ -133,6 +137,7 @@ func ExampleNewGitHubService_API() {
 	entity := NewGitHubService("github.com")
 	relatives := []string{
 		"https://api.github.com/repos/moul/depviz/labels/bug",
+		"https://api.github.com/repos/moul/depviz/labels/a/b/c",
 		"https://api.github.com/repos/moul/depviz",
 		"https://api.github.com/repos/moul/depviz/issues/1",
 		"https://api.github.com/repos/moul/depviz/pulls/170",
@@ -150,6 +155,7 @@ func ExampleNewGitHubService_API() {
 
 	// Output:
 	// https://api.github.com/repos/moul/depviz/labels/bug   -> https://github.com/moul/depviz/labels/bug          label                          moul/depviz/labels/bug
+	// https://api.github.com/repos/moul/depviz/labels/a/b/c -> https://github.com/moul/depviz/labels/a/b/c        label                          moul/depviz/labels/a/b/c
 	// https://api.github.com/repos/moul/depviz              -> https://github.com/moul/depviz                     project                        moul/depviz
 	// https://api.github.com/repos/moul/depviz/issues/1     -> https://github.com/moul/depviz/issues/1            issue-or-merge-request         moul/depviz#1
 	// https://api.github.com/repos/moul/depviz/pulls/170    -> https://github.com/moul/depviz/issues/170          issue-or-merge-request         moul/depviz#170
