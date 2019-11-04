@@ -26,6 +26,10 @@ func (e GitLabService) String() string {
 	return fmt.Sprintf("https://%s/", e.Hostname())
 }
 
+func (e GitLabService) LocalID() string {
+	return e.Hostname()
+}
+
 func (e GitLabService) RelDecodeString(input string) (Entity, error) {
 	return gitLabRelDecodeString(e.Hostname(), "", "", input, false)
 }
@@ -68,6 +72,10 @@ func (e GitLabIssue) String() string {
 	return fmt.Sprintf("https://%s/%s/%s/issues/%s", e.Hostname(), e.Owner(), e.Repo(), e.ID())
 }
 
+func (e GitLabIssue) LocalID() string {
+	return fmt.Sprintf("%s/%s#%s", e.Owner(), e.Repo(), e.ID())
+}
+
 func (e GitLabIssue) RelDecodeString(input string) (Entity, error) {
 	return gitLabRelDecodeString(e.Hostname(), e.Owner(), e.Repo(), input, false)
 }
@@ -104,6 +112,10 @@ func NewGitLabMilestone(hostname, owner, repo, id string) *GitLabMilestone {
 
 func (e GitLabMilestone) String() string {
 	return fmt.Sprintf("https://%s/%s/%s/-/milestones/%s", e.Hostname(), e.Owner(), e.Repo(), e.ID())
+}
+
+func (e GitLabMilestone) LocalID() string {
+	return fmt.Sprintf("%s/%s/milestone/%s", e.Owner(), e.Repo(), e.ID())
 }
 
 func (e GitLabMilestone) RelDecodeString(input string) (Entity, error) {
@@ -144,6 +156,10 @@ func (e GitLabMergeRequest) String() string {
 	return fmt.Sprintf("https://%s/%s/%s/merge_requests/%s", e.Hostname(), e.Owner(), e.Repo(), e.ID())
 }
 
+func (e GitLabMergeRequest) LocalID() string {
+	return fmt.Sprintf("%s/%s!%s", e.Owner(), e.Repo(), e.ID())
+}
+
 func (e GitLabMergeRequest) RelDecodeString(input string) (Entity, error) {
 	return gitLabRelDecodeString(e.Hostname(), e.Owner(), e.Repo(), input, false)
 }
@@ -180,6 +196,10 @@ func NewGitLabOwner(hostname, owner string) *GitLabOwner {
 
 func (e GitLabOwner) String() string {
 	return fmt.Sprintf("https://%s/%s", e.Hostname(), e.Owner())
+}
+
+func (e GitLabOwner) LocalID() string {
+	return fmt.Sprintf("@%s", e.Owner())
 }
 
 func (e GitLabOwner) RelDecodeString(input string) (Entity, error) {
@@ -224,6 +244,10 @@ func NewGitLabOwnerOrRepo(hostname, owner, repo string) *GitLabOwnerOrRepo {
 
 func (e GitLabOwnerOrRepo) String() string {
 	return fmt.Sprintf("https://%s/%s/%s", e.Hostname(), e.Owner(), e.Repo())
+}
+
+func (e GitLabOwnerOrRepo) LocalID() string {
+	return fmt.Sprintf("%s/%s", e.Owner(), e.Repo())
 }
 
 func (e GitLabOwnerOrRepo) RelDecodeString(input string) (Entity, error) {
@@ -273,6 +297,10 @@ func NewGitLabRepo(hostname, owner, repo string) *GitLabRepo {
 
 func (e GitLabRepo) String() string {
 	return fmt.Sprintf("https://%s/%s/%s", e.Hostname(), e.Owner(), e.Repo())
+}
+
+func (e GitLabRepo) LocalID() string {
+	return fmt.Sprintf("%s/%s", e.Owner(), e.Repo())
 }
 
 func (e GitLabRepo) RelDecodeString(input string) (Entity, error) {

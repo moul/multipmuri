@@ -56,3 +56,4 @@ func (unknownEntity) RelDecodeString(input string) (Entity, error) {
 
 	return nil, fmt.Errorf("ambiguous uri %q", input)
 }
+func (unknownEntity) LocalID() string { return "" }

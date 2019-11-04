@@ -11,6 +11,7 @@ type Entity interface {
 	Equals(Entity) bool                     // is the same of
 	Contains(Entity) bool                   // is parent of or is the same of
 	String() string                         // canonical URL
+	LocalID() string                        // short name
 }
 
 type WithKind interface {

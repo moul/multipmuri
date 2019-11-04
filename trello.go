@@ -28,6 +28,10 @@ func (e TrelloService) String() string {
 	return "https://trello.com/"
 }
 
+func (e TrelloService) LocalID() string {
+	return "trello.com"
+}
+
 func (e TrelloService) RelDecodeString(input string) (Entity, error) {
 	return trelloRelDecodeString(input, false)
 }
@@ -59,6 +63,10 @@ func NewTrelloCard(id string) *TrelloCard {
 
 func (e TrelloCard) String() string {
 	return fmt.Sprintf("https://trello.com/c/%s", e.ID())
+}
+
+func (e TrelloCard) LocalID() string {
+	return fmt.Sprintf("c/%s", e.ID())
 }
 
 func (e TrelloCard) RelDecodeString(input string) (Entity, error) {
@@ -96,6 +104,10 @@ func (e TrelloUser) String() string {
 	return fmt.Sprintf("https://trello.com/%s", e.ID())
 }
 
+func (e TrelloUser) LocalID() string {
+	return fmt.Sprintf("@%s", e.ID())
+}
+
 func (e TrelloUser) RelDecodeString(input string) (Entity, error) {
 	return trelloRelDecodeString(input, false)
 }
@@ -131,6 +143,9 @@ func (e TrelloBoard) String() string {
 	return fmt.Sprintf("https://trello.com/b/%s", e.ID())
 }
 
+func (e TrelloBoard) LocalID() string {
+	return fmt.Sprintf("b/%s", e.ID())
+}
 func (e TrelloBoard) RelDecodeString(input string) (Entity, error) {
 	return trelloRelDecodeString(input, false)
 }

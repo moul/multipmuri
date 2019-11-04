@@ -26,6 +26,10 @@ func (e GitHubService) String() string {
 	return fmt.Sprintf("https://%s/", e.Hostname())
 }
 
+func (e GitHubService) LocalID() string {
+	return e.Hostname()
+}
+
 func (e GitHubService) RelDecodeString(input string) (Entity, error) {
 	return gitHubRelDecodeString(e.Hostname(), "", "", input, false)
 }
@@ -65,6 +69,10 @@ func NewGitHubIssue(hostname, ownerID, repoID, id string) *GitHubIssue {
 
 func (e GitHubIssue) String() string {
 	return fmt.Sprintf("https://%s/%s/%s/issues/%s", e.Hostname(), e.OwnerID(), e.RepoID(), e.ID())
+}
+
+func (e GitHubIssue) LocalID() string {
+	return fmt.Sprintf("%s/%s#%s", e.OwnerID(), e.RepoID(), e.ID())
 }
 
 func (e GitHubIssue) RelDecodeString(input string) (Entity, error) {
@@ -108,6 +116,10 @@ func (e GitHubMilestone) String() string {
 	return fmt.Sprintf("https://%s/%s/%s/milestone/%s", e.Hostname(), e.OwnerID(), e.RepoID(), e.ID())
 }
 
+func (e GitHubMilestone) LocalID() string {
+	return fmt.Sprintf("%s/%s/milestone/%s", e.OwnerID(), e.RepoID(), e.ID())
+}
+
 func (e GitHubMilestone) RelDecodeString(input string) (Entity, error) {
 	return gitHubRelDecodeString(e.Hostname(), e.OwnerID(), e.RepoID(), input, false)
 }
@@ -145,6 +157,10 @@ func NewGitHubPullRequest(hostname, ownerID, repoID, id string) *GitHubPullReque
 func (e GitHubPullRequest) String() string {
 	// canonical URL for PR is voluntarily issues/%s instead of pull/%s
 	return fmt.Sprintf("https://%s/%s/%s/issues/%s", e.Hostname(), e.OwnerID(), e.RepoID(), e.ID())
+}
+
+func (e GitHubPullRequest) LocalID() string {
+	return fmt.Sprintf("%s/%s#%s", e.OwnerID(), e.RepoID(), e.ID())
 }
 
 func (e GitHubPullRequest) RelDecodeString(input string) (Entity, error) {
@@ -188,6 +204,10 @@ func (e GitHubIssueOrPullRequest) String() string {
 	return fmt.Sprintf("https://%s/%s/%s/issues/%s", e.Hostname(), e.OwnerID(), e.RepoID(), e.ID())
 }
 
+func (e GitHubIssueOrPullRequest) LocalID() string {
+	return fmt.Sprintf("%s/%s#%s", e.OwnerID(), e.RepoID(), e.ID())
+}
+
 func (e GitHubIssueOrPullRequest) RelDecodeString(input string) (Entity, error) {
 	return gitHubRelDecodeString(e.Hostname(), e.OwnerID(), e.RepoID(), input, false)
 }
@@ -227,6 +247,10 @@ func NewGitHubOwner(hostname, ownerID string) *GitHubOwner {
 
 func (e GitHubOwner) String() string {
 	return fmt.Sprintf("https://%s/%s", e.Hostname(), e.OwnerID())
+}
+
+func (e GitHubOwner) LocalID() string {
+	return "@" + e.OwnerID()
 }
 
 func (e GitHubOwner) RelDecodeString(input string) (Entity, error) {
@@ -270,6 +294,10 @@ func NewGitHubRepo(hostname, ownerID, repoID string) *GitHubRepo {
 
 func (e GitHubRepo) String() string {
 	return fmt.Sprintf("https://%s/%s/%s", e.Hostname(), e.OwnerID(), e.RepoID())
+}
+
+func (e GitHubRepo) LocalID() string {
+	return fmt.Sprintf("%s/%s", e.OwnerID(), e.RepoID())
 }
 
 func (e GitHubRepo) RelDecodeString(input string) (Entity, error) {
