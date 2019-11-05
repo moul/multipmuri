@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"testing"
 
-	. "github.com/smartystreets/goconvey/convey"
 	"moul.io/multipmuri"
 )
 
@@ -53,39 +52,54 @@ func ExampleParseString() {
 }
 
 func TestRelParseString(t *testing.T) {
-	Convey("Testing RelParseString", t, func() {
-		// simple
-		rels, errs := RelParseString(
+	var tests = []struct {
+		name              string
+		base              multipmuri.Entity
+		body              string
+		expectedErrsCount int
+		expectedRels      Relationships
+	}{
+		{
+			"simple",
 			multipmuri.NewGitHubIssue("", "moul", "depviz", "1"),
 			"Depends on #2",
-		)
-		So(len(errs), ShouldEqual, 0)
-		So(len(rels), ShouldEqual, 1)
-		So(rels[0].Kind, ShouldEqual, DependsOn)
-		So(rels[0].Target.String(), ShouldEqual, "https://github.com/moul/depviz/issues/2")
-
-		// multiple
-		rels, errs = RelParseString(
+			0,
+			Relationships{
+				{Kind: DependsOn, Target: multipmuri.NewGitHubIssue("", "moul", "depviz", "2")},
+			},
+		}, {
+			"multiple",
 			multipmuri.NewGitHubIssue("", "moul", "depviz", "1"),
 			"Depends on #2\nDepends on #3",
-		)
-		So(len(errs), ShouldEqual, 0)
-		So(len(rels), ShouldEqual, 2)
-		So(rels[0].Kind, ShouldEqual, DependsOn)
-		So(rels[0].Target.String(), ShouldEqual, "https://github.com/moul/depviz/issues/2")
-		So(rels[1].Kind, ShouldEqual, DependsOn)
-		So(rels[1].Target.String(), ShouldEqual, "https://github.com/moul/depviz/issues/3")
-
-		// spaces
-		rels, errs = RelParseString(
+			0,
+			Relationships{
+				{Kind: DependsOn, Target: multipmuri.NewGitHubIssue("", "moul", "depviz", "2")},
+				{Kind: DependsOn, Target: multipmuri.NewGitHubIssue("", "moul", "depviz", "3")},
+			},
+		}, {
+			"with-spaces",
 			multipmuri.NewGitHubIssue("", "moul", "depviz", "1"),
 			" Depends on #2 \n Depends on #3 \n\n ",
-		)
-		So(len(errs), ShouldEqual, 0)
-		So(len(rels), ShouldEqual, 2)
-		So(rels[0].Kind, ShouldEqual, DependsOn)
-		So(rels[0].Target.String(), ShouldEqual, "https://github.com/moul/depviz/issues/2")
-		So(rels[1].Kind, ShouldEqual, DependsOn)
-		So(rels[1].Target.String(), ShouldEqual, "https://github.com/moul/depviz/issues/3")
-	})
+			0,
+			Relationships{
+				{Kind: DependsOn, Target: multipmuri.NewGitHubIssue("", "moul", "depviz", "2")},
+				{Kind: DependsOn, Target: multipmuri.NewGitHubIssue("", "moul", "depviz", "3")},
+			},
+		},
+	}
+
+	for _, test := range tests {
+		t.Run(test.name, func(t *testing.T) {
+			rels, errs := RelParseString(test.base, test.body)
+			if test.expectedErrsCount != len(errs) {
+				t.Errorf("Expected %d errs, got %d.", test.expectedErrsCount, len(errs))
+			}
+
+			expectedStr := fmt.Sprintf("%v", test.expectedRels)
+			gotStr := fmt.Sprintf("%v", rels)
+			if expectedStr != gotStr {
+				t.Errorf("Expected %s, got %s.", expectedStr, gotStr)
+			}
+		})
+	}
 }
