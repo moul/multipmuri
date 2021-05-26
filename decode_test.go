@@ -21,6 +21,7 @@ func ExampleDecodeString() {
 		"github://https://github.com/moul/depviz#1",
 		"github://ghenterprise.company.com/a/b#42",
 		"github://https://ghenterprise.company.com",
+		"git@github.com:moul/depviz",
 	} {
 		decoded, err := DecodeString(uri)
 		if err != nil {
@@ -47,4 +48,5 @@ func ExampleDecodeString() {
 	// github://https://github.com/moul/depviz#1  https://github.com/moul/depviz/issues/1          github   issue-or-merge-request
 	// github://ghenterprise.company.com/a/b#42   https://ghenterprise.company.com/a/b/issues/42   github   issue-or-merge-request
 	// github://https://ghenterprise.company.com  https://ghenterprise.company.com/                github   service
+	// git@github.com:moul/depviz                 https://github.com/moul/depviz                   github   project
 }
