@@ -20,6 +20,10 @@ func (unknownEntity) String() string       { return "" }
 func (unknownEntity) Equals(Entity) bool   { return false }
 func (unknownEntity) Contains(Entity) bool { return false }
 func (unknownEntity) RelDecodeString(input string) (Entity, error) {
+	// FIXME: support more providers' cloning URLs
+	if strings.HasPrefix(input, "git@github.com:") {
+		input = strings.Replace(input, "git@github.com:", "https://github.com/", 1)
+	}
 	u, err := url.Parse(input)
 	if err != nil {
 		return nil, err
